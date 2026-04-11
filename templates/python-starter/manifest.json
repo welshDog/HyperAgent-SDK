@@ -1,0 +1,26 @@
+{
+  "name": "my-python-agent",
+  "version": "0.1.0",
+  "display_name": "My Python Agent",
+  "description": "A starter Python agent for the Hyperfocus Zone ecosystem",
+  "author": "your-discord-username",
+  "runtime": "python",
+  "entrypoint": "main.py",
+  "tools": [
+    {
+      "name": "hello_world",
+      "description": "Returns a greeting. Replace this with your real tool.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Who to greet" }
+        },
+        "required": ["name"]
+      }
+    }
+  ],
+  "mcp_compatible": false,
+  "memory": "none",
+  "tags": ["starter", "python"],
+  "course_level": 2
+}

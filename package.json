@@ -1,0 +1,19 @@
+{
+  "name": "hyper-agent",
+  "version": "0.1.0",
+  "description": "🤖 HyperAgent SDK — validate, scaffold and deploy agents in the Hyperfocus Zone ecosystem",
+  "main": "index.js",
+  "bin": {
+    "hyper-agent": "./cli/validate.js"
+  },
+  "scripts": {
+    "test": "node tests/validate.test.js"
+  },
+  "keywords": ["hypercode", "agents", "mcp", "adhd", "hyperfocus"],
+  "author": "welshDog",
+  "license": "MIT",
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1"
+  }
+}

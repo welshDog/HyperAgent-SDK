@@ -1,0 +1,26 @@
+{
+  "name": "my-node-agent",
+  "version": "0.1.0",
+  "display_name": "My Node Agent",
+  "description": "A starter Node.js agent for the Hyperfocus Zone ecosystem",
+  "author": "your-discord-username",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "tools": [
+    {
+      "name": "hello_world",
+      "description": "Returns a greeting. Replace this with your real tool.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Who to greet" }
+        },
+        "required": ["name"]
+      }
+    }
+  ],
+  "mcp_compatible": false,
+  "memory": "none",
+  "tags": ["starter", "node"],
+  "course_level": 2
+}
