@@ -56,7 +56,7 @@
             "required": ["type", "properties"],
             "properties": {
               "type": { "type": "string" },
-              "properties": { "type": "object" },
+              "properties": { "type": { } },
               "required": { "type": "array", "items": { "type": "string" } }
             }
           },
@@ -105,6 +105,6 @@
     "required": ["mcp_compatible"]
   },
   "then": {
-    "required": ["port"],
+    "required": ["port"]
   }
 }
