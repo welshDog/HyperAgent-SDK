@@ -1,6 +1,6 @@
 {
   "name": "@w3lshdog/hyper-agent",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0",
   "description": "Shared agent interface standard for the Hyperfocus Zone ecosystem — validate manifests, scaffold agents",
   "main": "cli/validate.js",
   "bin": {
