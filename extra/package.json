@@ -1,0 +1,45 @@
+{
+  "name": "hyper-agent",
+  "version": "0.1.0-alpha.1",
+  "description": "Shared agent interface standard for the Hyperfocus Zone ecosystem — validate manifests, scaffold agents",
+  "main": "cli/validate.js",
+  "bin": {
+    "hyper-agent": "cli/validate.js"
+  },
+  "scripts": {
+    "validate": "node cli/validate.js",
+    "test": "node cli/validate.js templates/python-starter/ && node cli/validate.js templates/node-starter/ && echo 'All templates valid ✅'"
+  },
+  "keywords": [
+    "ai-agents",
+    "hypercode",
+    "hyperfocus-zone",
+    "agent-sdk",
+    "mcp",
+    "neurodivergent",
+    "adhd"
+  ],
+  "author": "welshDog",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/welshDog/HyperAgent-SDK.git"
+  },
+  "homepage": "https://github.com/welshDog/HyperAgent-SDK#readme",
+  "bugs": {
+    "url": "https://github.com/welshDog/HyperAgent-SDK/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1"
+  },
+  "files": [
+    "cli/",
+    "templates/",
+    "hyper-agent-spec.json",
+    "README.md",
+    "LICENSE"
+  ]
+}
