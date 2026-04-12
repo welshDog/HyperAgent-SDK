@@ -9,19 +9,19 @@
 
 ```bash
 # Validate an agent (no install needed)
-npx @welshdog/hyper-agent validate .agents/my-agent/
+npx @w3lshdog/hyper-agent validate .agents/my-agent/
 
 # Validate all agents in a folder
-npx @welshdog/hyper-agent validate .agents/
+npx @w3lshdog/hyper-agent validate .agents/
 
 # Install as a dev dependency (for CI)
-npm install -D @welshdog/hyper-agent
+npm install -D @w3lshdog/hyper-agent
 ```
 
 ### Use a starter template
 
 ```bash
-cp -r node_modules/@welshdog/hyper-agent/templates/python-starter .agents/my-new-agent
+cp -r node_modules/@w3lshdog/hyper-agent/templates/python-starter .agents/my-new-agent
 ```
 
 ---
