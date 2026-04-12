@@ -42,15 +42,33 @@
         "required": ["name", "description", "input_schema"],
         "additionalProperties": false,
         "properties": {
-          "name": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" },
-          "description": { "type": "string", "maxLength": 300 },
-          "input_schema": { "type": "object" },
-          "output_schema": { "type": "object" }
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,62}[a-z0-9]$"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "input_schema": {
+            "type": "object",
+            "description": "JSON Schema for tool inputs. Must have at least one property for meaningful tools.",
+            "required": ["type", "properties"],
+            "properties": {
+              "type": { "type": "string" },
+              "properties": { "type": "object" },
+              "required": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "output_schema": {
+            "type": "object"
+          }
         }
       }
     },
     "mcp_compatible": {
-      "type": "boolean"
+      "type": "boolean",
+      "description": "If true, port is required and must be in the 3100-3999 range per the HyperAgent port convention"
     },
     "memory": {
       "enum": ["none", "redis", "postgres"],
@@ -63,7 +81,8 @@
     "port": {
       "type": "integer",
       "minimum": 3100,
-      "maximum": 3999
+      "maximum": 3999,
+      "description": "Required when mcp_compatible is true. See port convention: 3100-3199 writing, 3200-3299 code, 3300-3399 data, 3400-3499 discord, 3500-3599 automation"
     },
     "health_check": {
       "type": "string"
@@ -75,7 +94,18 @@
     "course_level": {
       "type": "integer",
       "minimum": 1,
-      "maximum": 5
+      "maximum": 5,
+      "description": "Gates course progression. 1=HyperNewbie, 2=Vibe Coder, 3=Agent Builder, 4=HyperCoder, 5=BROski Elite"
     }
+  },
+  "if": {
+    "properties": {
+      "mcp_compatible": { "const": true }
+    },
+    "required": ["mcp_compatible"]
+  },
+  "then": {
+    "required": ["port"],
+    "errorMessage": "port is required when mcp_compatible is true. Pick a range: 3100-3199 (writing), 3200-3299 (code), 3300-3399 (data), 3400-3499 (discord), 3500-3599 (automation)"
   }
 }

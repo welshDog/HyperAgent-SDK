@@ -5,6 +5,16 @@
 
 ---
 
+> ⚠️ **Pre-release — CLI not yet published to npm.**
+> `npx hyper-agent validate` won't work until the package is published.
+> **Install locally for now:**
+> ```bash
+> npm install
+> node cli/validate.js .agents/my-agent/
+> ```
+
+---
+
 ## What Is This?
 
 Two repos. One agent spec. The `manifest.json` is the **passport** — it's the bridge that lets a Course-built agent graduate into V2.4's production Hyper-Agents-Box.
@@ -18,19 +28,23 @@ Hyper-Vibe-Coding-Course  ──── manifest.json ────▶  HyperCode 
 
 ## Quick Start
 
-### Validate an agent
+### Validate an agent (local install)
+
 ```bash
-npx hyper-agent validate .agents/my-agent/
+npm install
+node cli/validate.js .agents/my-agent/
 ```
 
 ### Validate all agents
+
 ```bash
-npx hyper-agent validate .agents/
+node cli/validate.js .agents/
 ```
 
 ### Use a starter template
+
 ```bash
-cp -r node_modules/hyper-agent/templates/python-starter .agents/my-new-agent
+cp -r templates/python-starter .agents/my-new-agent
 ```
 
 ---
@@ -38,15 +52,32 @@ cp -r node_modules/hyper-agent/templates/python-starter .agents/my-new-agent
 ## `manifest.json` — Required Fields
 
 | Field | Type | Example |
-|-------|------|---------|
-| `name` | string (kebab-case) | `"my-writing-agent"` |
+|---|---|---|
+| `name` | string (kebab-case, 3–50 chars) | `"my-writing-agent"` |
 | `version` | semver string | `"0.1.0"` |
 | `runtime` | `python` \| `node` \| `deno` | `"python"` |
 | `entrypoint` | string | `"main.py"` |
 | `tools` | array (min 1) | see below |
 | `mcp_compatible` | boolean | `false` |
 
+### Optional Fields
+
+| Field | Type | Notes |
+|---|---|---|
+| `display_name` | string | Max 80 chars |
+| `description` | string | Max 500 chars |
+| `author` | string | Your name / handle |
+| `memory` | `none` \| `redis` \| `postgres` | Default: `"none"` |
+| `env_vars` | string[] | Required env var names |
+| `port` | integer 3100–3999 | **Required when `mcp_compatible: true`** |
+| `health_check` | string | Health check path |
+| `tags` | string[] | Freeform labels |
+| `course_level` | integer 1–5 | Gates course progression |
+
+---
+
 ### Minimal valid `manifest.json`
+
 ```json
 {
   "name": "my-agent",
@@ -55,12 +86,49 @@ cp -r node_modules/hyper-agent/templates/python-starter .agents/my-new-agent
   "entrypoint": "main.py",
   "tools": [
     {
-      "name": "do_the_thing",
-      "description": "Does the thing",
-      "input_schema": { "type": "object", "properties": {} }
+      "name": "web_search",
+      "description": "Search the web and return relevant results for a given query",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query to look up"
+          }
+        },
+        "required": ["query"]
+      }
     }
   ],
   "mcp_compatible": false
+}
+```
+
+### MCP-compatible agent `manifest.json`
+
+```json
+{
+  "name": "my-mcp-agent",
+  "version": "0.1.0",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "tools": [
+    {
+      "name": "summarise_document",
+      "description": "Summarise a document given its URL",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string", "description": "URL of the document" },
+          "max_words": { "type": "integer", "description": "Max words in summary" }
+        },
+        "required": ["url"]
+      }
+    }
+  ],
+  "mcp_compatible": true,
+  "port": 3200,
+  "memory": "redis"
 }
 ```
 
@@ -68,15 +136,15 @@ cp -r node_modules/hyper-agent/templates/python-starter .agents/my-new-agent
 
 ## Port Convention (for MCP agents)
 
+> Only needed when `mcp_compatible: true`. The `port` field becomes **required**.
+
 | Range | Agent Type |
-|-------|------------|
+|---|---|
 | 3100–3199 | Writing / content |
 | 3200–3299 | Code review / dev |
 | 3300–3399 | Data / research |
 | 3400–3499 | Discord / social |
 | 3500–3599 | Personal automation |
-
-Only needed when `mcp_compatible: true`.
 
 ---
 
@@ -85,7 +153,7 @@ Only needed when `mcp_compatible: true`.
 The `course_level` field (1–5) gates which agents students can build:
 
 | Level | Title | Can Build |
-|-------|-------|----------|
+|---|---|---|
 | 1 | HyperNewbie | Starter templates |
 | 2 | Vibe Coder | Custom tools, Supabase agents |
 | 3 | Agent Builder | Multi-tool, memory agents |
