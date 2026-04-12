@@ -106,6 +106,5 @@
   },
   "then": {
     "required": ["port"],
-    "errorMessage": "port is required when mcp_compatible is true. Pick a range: 3100-3199 (writing), 3200-3299 (code), 3300-3399 (data), 3400-3499 (discord), 3500-3599 (automation)"
   }
 }
