@@ -51,14 +51,7 @@
             "maxLength": 300
           },
           "input_schema": {
-            "type": "object",
-            "description": "JSON Schema for tool inputs. Must have at least one property for meaningful tools.",
-            "required": ["type", "properties"],
-            "properties": {
-              "type": { "type": "string" },
-              "properties": { "type": { } },
-              "required": { "type": "array", "items": { "type": "string" } }
-            }
+            "type": "object"
           },
           "output_schema": {
             "type": "object"
@@ -108,4 +101,3 @@
     "required": ["port"]
   }
 }
-
