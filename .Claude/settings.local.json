@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//mnt/**)",
+      "Read(//h//**)",
+      "Read(//h/the hyper vibe coding hub/**)"
+    ]
+  }
+}
