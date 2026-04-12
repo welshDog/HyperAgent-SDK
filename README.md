@@ -5,13 +5,24 @@
 
 ---
 
-> ⚠️ **Pre-release — CLI not yet published to npm.**
-> `npx hyper-agent validate` won't work until the package is published.
-> **Install locally for now:**
-> ```bash
-> npm install
-> node cli/validate.js .agents/my-agent/
-> ```
+## Quick Start
+
+```bash
+# Validate an agent (no install needed)
+npx @welshdog/hyper-agent validate .agents/my-agent/
+
+# Validate all agents in a folder
+npx @welshdog/hyper-agent validate .agents/
+
+# Install as a dev dependency (for CI)
+npm install -D @welshdog/hyper-agent
+```
+
+### Use a starter template
+
+```bash
+cp -r node_modules/@welshdog/hyper-agent/templates/python-starter .agents/my-new-agent
+```
 
 ---
 
@@ -22,29 +33,6 @@ Two repos. One agent spec. The `manifest.json` is the **passport** — it's the 
 ```
 Hyper-Vibe-Coding-Course  ──── manifest.json ────▶  HyperCode V2.4
    (.agents/ folder)          (hyper-agent-spec)     (Hyper-Agents-Box)
-```
-
----
-
-## Quick Start
-
-### Validate an agent (local install)
-
-```bash
-npm install
-node cli/validate.js .agents/my-agent/
-```
-
-### Validate all agents
-
-```bash
-node cli/validate.js .agents/
-```
-
-### Use a starter template
-
-```bash
-cp -r templates/python-starter .agents/my-new-agent
 ```
 
 ---
