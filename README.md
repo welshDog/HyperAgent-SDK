@@ -5,11 +5,14 @@
 [![npm](https://img.shields.io/badge/npm-%40w3lshdog%2Fhyper--agent-red)](https://www.npmjs.com/package/@w3lshdog/hyper-agent)
 [![Made by WelshDog](https://img.shields.io/badge/Made_by-WelshDog_🦅-orange)](https://github.com/welshDog)
 [![Part of Hyperfocus Zone](https://img.shields.io/badge/Hyperfocus_Zone-♥️_Ecosystem-purple)](https://github.com/welshDog)
+[![CLI](https://img.shields.io/badge/CLI-v2%20—%20validate%20%7C%20registry%20%7C%20memory-blue)](#)
 
-> **"The agent toolkit behind the Hyperfocus Zone — plug in, vibe out."**
+> **"“The agent toolkit behind the Hyperfocus Zone — plug in, vibe out.”"**
 
 HyperAgent-SDK is the orchestration layer for AI agents across the Hyperfocus Zone ecosystem.
 Build once, deploy across Discord bots, FastAPI backends, and course platforms. 🧩
+
+**Built for ADHD brains. Fast feedback. Real tools. No fluff.** 🧠⚡
 
 ---
 
@@ -39,6 +42,7 @@ cp -r node_modules/@w3lshdog/hyper-agent/templates/python-starter .agents/my-age
   "version": "0.1.0",
   "runtime": "python",
   "entrypoint": "main.py",
+  "memory": "redis",
   "tools": [
     {
       "name": "code_gen",
@@ -56,13 +60,17 @@ cp -r node_modules/@w3lshdog/hyper-agent/templates/python-starter .agents/my-age
 }
 ```
 
-### 3️⃣ Validate & ship
+### 3️⃣ Validate, check memory & ship
 ```bash
+# Standard validate
 npx @w3lshdog/hyper-agent validate .agents/my-agent/
 # ✅ manifest.json valid — ready to deploy to HyperCode V2.4!
 
 # 🔒 Strict mode (for CI/production)
 npx @w3lshdog/hyper-agent validate .agents/my-agent/ --strict
+
+# 🧠 Check memory health before deploy
+npx @w3lshdog/hyper-agent memory check .agents/my-agent/
 ```
 
 ---
@@ -79,6 +87,50 @@ Run `--strict` for production-grade checks. Errors exit with code `1` (CI catche
 | 🛰️ MCP port conflicts | ERROR | Scans all agents in a batch, flags duplicate ports |
 
 > Strict **errors** fail the build. **Warnings** inform but don't block deploy.
+
+---
+
+## 🧠 Smart Memory Check
+
+Ping your Redis or Postgres backend before deploy. Get instant health status and copy-paste `docker run` fixes if anything's offline.
+
+```bash
+# Check single agent's memory backend
+hyper-agent memory check .agents/my-agent/
+
+# Check ALL agents in a folder at once
+hyper-agent memory check templates/ --all
+
+# Custom host/port overrides (remote servers)
+hyper-agent memory check . --redis-host 192.168.1.10 --pg-host db.myserver.com
+```
+
+### Example output
+```
+🧠 HyperAgent Memory Check v2
+  Scanning memory backends for your agents...
+
+━━━ Agent: my-broski-agent (memory: redis)
+
+🔴 Redis  localhost:6379
+  ✗  Redis is OFFLINE at localhost:6379
+  ⚠️  Agents using memory: redis will fail at runtime
+
+  💡 Start Redis with Docker:
+     docker run -d --name hyper-redis -p 6379:6379 redis:alpine
+  💡 Or start existing container:
+     docker start hyper-redis
+```
+
+### What it checks
+
+| Backend | Port | What it does |
+|---------|------|--------------|
+| 🔴 Redis | 6379 | TCP ping + docker run tip if offline |
+| 🐘 Postgres | 5432 | TCP ping + docker run tip if offline |
+| — None | — | Reports stateless, no action needed |
+
+> Exit code `1` if any backend offline — CI pipelines catch this automatically.
 
 ---
 
@@ -99,8 +151,6 @@ hyper-agent registry show my-node-agent
 
 ### 🏅 Auto-Computed Badges
 
-Badges are generated automatically when you run `registry build`:
-
 | Badge | Meaning |
 |-------|---------|
 | ⚡ MCP Ready | Agent declares MCP port |
@@ -112,7 +162,7 @@ Badges are generated automatically when you run `registry build`:
 | 💚 Health Checked | Passed runtime validation |
 | ✅ Verified | Built with --strict flag |
 
-> Authors can also declare optional badges in `hyper-agent-spec.json`: `featured`, `community-pick`, `experimental`
+> Authors can also declare optional badges: `featured`, `community-pick`, `experimental`
 
 ---
 
@@ -123,16 +173,17 @@ Badges are generated automatically when you run `registry build`:
 - 🌐 **Multi-Deploy** — Run in Discord, FastAPI, or standalone
 - 🧩 **HyperCode Native** — Plug directly into V2.4's Hyper-Agents-Box
 - 🎮 **Course-Gated Levels** — Agents unlock as students level up
-- 📋 **Spec-Validated** — `hyper-agent-spec.json` ensures consistency across the ecosystem
-- 🌍 **Agent Registry** — Discover, search, and inspect agents by tag, badge, and level
-- 🛡️ **Strict Mode CI** — Production-grade validation with exit codes for CI pipelines
+- 📋 **Spec-Validated** — `hyper-agent-spec.json` ensures consistency
+- 🌍 **Agent Registry** — Discover, search, inspect agents by tag, badge & level
+- 🛡️ **Strict Mode CI** — Production-grade validation with exit codes
+- 🧠 **Smart Memory Check** — Ping Redis/Postgres health, get instant docker tips
 
 ---
 
 ## 🎮 Course Levels — Agent Unlock System
 
 | Level | Title | Can Build |
-|-------|-------|-----------| 
+|-------|-------|-----------|
 | 1 | HyperNewbie | Starter templates |
 | 2 | Vibe Coder | Custom tools, Supabase agents |
 | 3 | Agent Builder | Multi-tool, memory agents |
@@ -144,17 +195,17 @@ Badges are generated automatically when you run `registry build`:
 ## 🗺️ Roadmap
 
 ### ✅ Shipped (v2)
-- [x] `cli/index.js` — router entrypoint with clean help output
+- [x] `cli/index.js` — router entrypoint, clean help output
 - [x] `cli/validate.js` — `--strict` mode with 4 runtime checks
-- [x] `cli/registry.js` — `build`, `search`, `show` subcommands
-- [x] Auto-computed badge system (8 badges)
+- [x] `cli/registry.js` — `build`, `search`, `show` subcommands + 8 auto-badges
+- [x] `cli/memory.js` — Smart Memory Check (Redis + Postgres + docker tips) 🧠
 - [x] `hyper-agent-spec.json` — optional author-declared badges array
 
-### 🔜 Coming Next (v3)
-- [ ] **Smart Memory Provisioning** — `hyper-agent memory check` pings Redis/Postgres, shows health, suggests `docker run` if not running
-- [ ] **HyperAgent Studio** — Visual GUI reads `registry.json`, drag-and-drop manifest clusters, real-time validation, auto docs
-- [ ] **Community Registry** — Public discovery via GitHub Discussions + JSON feed
-- [ ] **`--watch` mode** — Live re-validation on file change during development
+### 🔜 Coming Next (v3) — THE HYPER ERA
+- [ ] 🖥️ **HyperAgent Studio** — Visual GUI, reads `registry.json`, drag-and-drop manifest clusters, real-time validation, auto docs
+- [ ] 🌍 **Community Registry** — Public discovery via GitHub Discussions + JSON feed
+- [ ] 👁️ **`--watch` mode** — Live re-validation on file change during dev
+- [ ] 🔊 **Memory health dashboard** — Visual Redis/Postgres status in Studio GUI
 
 ---
 
@@ -163,9 +214,10 @@ Badges are generated automatically when you run `registry build`:
 ```
 HyperAgent-SDK/
 ├── cli/
-│   ├── index.js          # Router entrypoint — dispatches subcommands
-│   ├── validate.js       # Validation logic (standard + --strict)
-│   └── registry.js       # Registry build / search / show
+│   ├── index.js          # Router — dispatches all subcommands
+│   ├── validate.js       # Validation (standard + --strict)
+│   ├── registry.js       # Registry build / search / show
+│   └── memory.js         # 🧠 Smart Memory Check (Redis + Postgres)
 ├── docs/                 # Full SDK documentation
 ├── templates/            # Agent starter templates
 ├── hyper-agent-spec.json # The agent manifest schema
@@ -195,6 +247,8 @@ HyperCode V2.4 (FastAPI backend)
 Supabase (DB + Edge Functions)
 ↓ serves
 Hyper-Vibe-Coding-Course (Next.js)
+↓ visual layer (coming v3)
+HyperAgent Studio 🖥️
 ```
 
 ---
