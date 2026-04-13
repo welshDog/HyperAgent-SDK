@@ -60,7 +60,59 @@ cp -r node_modules/@w3lshdog/hyper-agent/templates/python-starter .agents/my-age
 ```bash
 npx @w3lshdog/hyper-agent validate .agents/my-agent/
 # ✅ manifest.json valid — ready to deploy to HyperCode V2.4!
+
+# 🔒 Strict mode (for CI/production)
+npx @w3lshdog/hyper-agent validate .agents/my-agent/ --strict
 ```
+
+---
+
+## 🛡️ --strict Validation Mode
+
+Run `--strict` for production-grade checks. Errors exit with code `1` (CI catches them automatically).
+
+| Check | Level | What it does |
+|-------|-------|--------------|
+| ✅ Entrypoint exists | ERROR | manifest.entrypoint file must be on disk |
+| 🔧 Runtime sanity | WARN | node → package.json · python → requirements.txt · deno → deno.json |
+| 🔐 env_vars simulation | WARN | Each declared env_var checked against process.env + .env file |
+| 🛰️ MCP port conflicts | ERROR | Scans all agents in a batch, flags duplicate ports |
+
+> Strict **errors** fail the build. **Warnings** inform but don't block deploy.
+
+---
+
+## 🌍 Agent Registry
+
+Build and search a local registry of your agents. Auto-computes badges from manifest data — no manual input needed.
+
+```bash
+# Build registry from your templates folder
+hyper-agent registry build templates/ --out registry.json [--strict]
+
+# Search agents by tag, runtime, badge, or level
+hyper-agent registry search --tags starter --runtime node --badge mcp-ready --level 3
+
+# Inspect a specific agent
+hyper-agent registry show my-node-agent
+```
+
+### 🏅 Auto-Computed Badges
+
+Badges are generated automatically when you run `registry build`:
+
+| Badge | Meaning |
+|-------|---------|
+| ⚡ MCP Ready | Agent declares MCP port |
+| 🧠 Memory Enabled | Redis or Postgres memory configured |
+| 🔧 Multi-Tool | 2+ tools declared in manifest |
+| 🔐 Env Declared | env_vars present in manifest |
+| 🚀 HyperCoder | Level 4+ agent |
+| 👑 Elite | Level 5 BROski agent |
+| 💚 Health Checked | Passed runtime validation |
+| ✅ Verified | Built with --strict flag |
+
+> Authors can also declare optional badges in `hyper-agent-spec.json`: `featured`, `community-pick`, `experimental`
 
 ---
 
@@ -72,13 +124,15 @@ npx @w3lshdog/hyper-agent validate .agents/my-agent/
 - 🧩 **HyperCode Native** — Plug directly into V2.4's Hyper-Agents-Box
 - 🎮 **Course-Gated Levels** — Agents unlock as students level up
 - 📋 **Spec-Validated** — `hyper-agent-spec.json` ensures consistency across the ecosystem
+- 🌍 **Agent Registry** — Discover, search, and inspect agents by tag, badge, and level
+- 🛡️ **Strict Mode CI** — Production-grade validation with exit codes for CI pipelines
 
 ---
 
 ## 🎮 Course Levels — Agent Unlock System
 
 | Level | Title | Can Build |
-|-------|-------|-----------|
+|-------|-------|-----------| 
 | 1 | HyperNewbie | Starter templates |
 | 2 | Vibe Coder | Custom tools, Supabase agents |
 | 3 | Agent Builder | Multi-tool, memory agents |
@@ -87,11 +141,31 @@ npx @w3lshdog/hyper-agent validate .agents/my-agent/
 
 ---
 
+## 🗺️ Roadmap
+
+### ✅ Shipped (v2)
+- [x] `cli/index.js` — router entrypoint with clean help output
+- [x] `cli/validate.js` — `--strict` mode with 4 runtime checks
+- [x] `cli/registry.js` — `build`, `search`, `show` subcommands
+- [x] Auto-computed badge system (8 badges)
+- [x] `hyper-agent-spec.json` — optional author-declared badges array
+
+### 🔜 Coming Next (v3)
+- [ ] **Smart Memory Provisioning** — `hyper-agent memory check` pings Redis/Postgres, shows health, suggests `docker run` if not running
+- [ ] **HyperAgent Studio** — Visual GUI reads `registry.json`, drag-and-drop manifest clusters, real-time validation, auto docs
+- [ ] **Community Registry** — Public discovery via GitHub Discussions + JSON feed
+- [ ] **`--watch` mode** — Live re-validation on file change during development
+
+---
+
 ## 📁 Repo Structure
 
 ```
 HyperAgent-SDK/
-├── cli/                  # CLI validation tool
+├── cli/
+│   ├── index.js          # Router entrypoint — dispatches subcommands
+│   ├── validate.js       # Validation logic (standard + --strict)
+│   └── registry.js       # Registry build / search / show
 ├── docs/                 # Full SDK documentation
 ├── templates/            # Agent starter templates
 ├── hyper-agent-spec.json # The agent manifest schema
