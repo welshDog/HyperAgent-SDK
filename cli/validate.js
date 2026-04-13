@@ -1,63 +1,166 @@
 #!/usr/bin/env node
 // hyper-agent validate — validates manifest.json against hyper-agent-spec.json
+// Supports --strict for deep runtime checks
 
-const fs = require('fs');
+const fs   = require('fs');
 const path = require('path');
-const Ajv = require('ajv');
+const Ajv  = require('ajv');
 const addFormats = require('ajv-formats');
 
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
 const SPEC_PATH = path.join(__dirname, '..', 'hyper-agent-spec.json');
-const spec = JSON.parse(fs.readFileSync(SPEC_PATH, 'utf8'));
-const validate = ajv.compile(spec);
+const spec      = JSON.parse(fs.readFileSync(SPEC_PATH, 'utf8'));
+const validate  = ajv.compile(spec);
 
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
+const GREEN  = '\x1b[32m';
+const RED    = '\x1b[31m';
 const YELLOW = '\x1b[33m';
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
+const CYAN   = '\x1b[36m';
+const DIM    = '\x1b[2m';
+const RESET  = '\x1b[0m';
+const BOLD   = '\x1b[1m';
 
-function validateAgent(agentDir) {
+// ─── Strict checks ────────────────────────────────────────────────────────────
+
+function parseEnvFile(agentDir) {
+  const envPath = path.join(agentDir, '.env');
+  if (!fs.existsSync(envPath)) return {};
+  const vars = {};
+  fs.readFileSync(envPath, 'utf8').split('\n').forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) return;
+    const eq = trimmed.indexOf('=');
+    if (eq > 0) vars[trimmed.slice(0, eq).trim()] = true;
+  });
+  return vars;
+}
+
+function strictChecks(agentDir, manifest, seenPorts) {
+  const issues = [];
+
+  // 1. Entrypoint file exists on disk
+  const epPath = path.join(agentDir, manifest.entrypoint);
+  if (!fs.existsSync(epPath)) {
+    issues.push({ level: 'error', msg: `entrypoint '${manifest.entrypoint}' not found on disk` });
+  } else {
+    issues.push({ level: 'ok', msg: `entrypoint '${manifest.entrypoint}' found` });
+  }
+
+  // 2. Runtime sanity — expected file exists
+  const runtimeFiles = { node: 'package.json', python: 'requirements.txt', deno: 'deno.json' };
+  const runtimeFile  = runtimeFiles[manifest.runtime];
+  if (runtimeFile) {
+    const runtimePath = path.join(agentDir, runtimeFile);
+    if (!fs.existsSync(runtimePath)) {
+      issues.push({ level: 'warn', msg: `runtime '${manifest.runtime}' but no ${runtimeFile} found` });
+    } else {
+      issues.push({ level: 'ok', msg: `runtime file '${runtimeFile}' found` });
+    }
+  }
+
+  // 3. env_vars injection simulation
+  if (manifest.env_vars && manifest.env_vars.length > 0) {
+    const envFileVars = parseEnvFile(agentDir);
+    const missing = [];
+    const found   = [];
+    manifest.env_vars.forEach(v => {
+      (process.env[v] || envFileVars[v] ? found : missing).push(v);
+    });
+    found.forEach(v =>
+      issues.push({ level: 'ok', msg: `env_var '${v}' present` })
+    );
+    missing.forEach(v =>
+      issues.push({ level: 'warn', msg: `env_var '${v}' not set (not in process.env or .env)` })
+    );
+  } else {
+    issues.push({ level: 'ok', msg: 'env_vars: none declared' });
+  }
+
+  // 4. MCP port conflict detection (shared seenPorts Map across agents)
+  if (manifest.mcp_compatible && manifest.port) {
+    if (seenPorts.has(manifest.port)) {
+      issues.push({
+        level: 'error',
+        msg:   `port ${manifest.port} conflicts with agent '${seenPorts.get(manifest.port)}'`
+      });
+    } else {
+      seenPorts.set(manifest.port, manifest.name);
+      issues.push({ level: 'ok', msg: `port ${manifest.port} — no conflicts` });
+    }
+  }
+
+  return issues;
+}
+
+// ─── Single agent validation ──────────────────────────────────────────────────
+
+function validateAgent(agentDir, { strict = false, seenPorts = new Map() } = {}) {
   const manifestPath = path.join(agentDir, 'manifest.json');
 
   if (!fs.existsSync(manifestPath)) {
     console.log(`${RED}✗ ${path.basename(agentDir)} — no manifest.json found${RESET}`);
-    return false;
+    return { passed: false, strictErrors: 0 };
   }
 
   let manifest;
   try {
     manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-  } catch (e) {
+  } catch {
     console.log(`${RED}✗ ${path.basename(agentDir)} — invalid JSON in manifest.json${RESET}`);
-    return false;
+    return { passed: false, strictErrors: 0 };
   }
 
   const valid = validate(manifest);
 
-  if (valid) {
-    const tools = manifest.tools?.length || 0;
-    const mcp = manifest.mcp_compatible ? 'mcp: ✓' : 'mcp: ✗';
-    console.log(`${GREEN}✓ ${manifest.name} v${manifest.version}${RESET} — ${tools} tool(s), ${manifest.runtime}, ${mcp}`);
-    return true;
-  } else {
+  if (!valid) {
     console.log(`${RED}✗ ${manifest.name || path.basename(agentDir)} — INVALID manifest${RESET}`);
     validate.errors.forEach(err => {
       console.log(`  ${YELLOW}→ ${err.instancePath || '(root)'}: ${err.message}${RESET}`);
     });
-    return false;
+    return { passed: false, strictErrors: 0 };
   }
+
+  const tools  = manifest.tools?.length || 0;
+  const mcpStr = manifest.mcp_compatible ? `${GREEN}mcp: ✓${RESET}` : `${DIM}mcp: ✗${RESET}`;
+  const memStr = manifest.memory && manifest.memory !== 'none'
+    ? ` ${CYAN}mem: ${manifest.memory}${RESET}`
+    : '';
+  console.log(`${GREEN}✓ ${manifest.name} v${manifest.version}${RESET} — ${tools} tool(s), ${manifest.runtime}, ${mcpStr}${memStr}`);
+
+  if (!strict) return { passed: true, strictErrors: 0, manifest };
+
+  // Run strict checks
+  const issues = strictChecks(agentDir, manifest, seenPorts);
+  let strictErrors = 0;
+
+  issues.forEach(({ level, msg }) => {
+    if (level === 'ok') {
+      console.log(`  ${DIM}[STRICT]${RESET} ${GREEN}✓${RESET} ${msg}`);
+    } else if (level === 'warn') {
+      console.log(`  ${DIM}[STRICT]${RESET} ${YELLOW}⚠${RESET} ${msg}`);
+    } else {
+      console.log(`  ${DIM}[STRICT]${RESET} ${RED}✗${RESET} ${msg}`);
+      strictErrors++;
+    }
+  });
+
+  return { passed: true, strictErrors, manifest };
 }
 
-function run() {
-  const targetArg = process.argv[2];
+// ─── CLI runner ───────────────────────────────────────────────────────────────
+
+function run(args) {
+  const strict    = args.includes('--strict');
+  const pathArgs  = args.filter(a => !a.startsWith('--'));
+  const targetArg = pathArgs[0];
 
   if (!targetArg) {
     console.log(`${BOLD}Usage:${RESET}`);
-    console.log('  npx hyper-agent validate <agent-dir>');
-    console.log('  npx hyper-agent validate .agents/');
+    console.log('  hyper-agent validate <agent-dir> [--strict]');
+    console.log('  hyper-agent validate .agents/     [--strict]');
+    if (strict) console.log(`\n${CYAN}--strict${RESET}: checks entrypoint, env_vars, runtime files, MCP port conflicts`);
     process.exit(1);
   }
 
@@ -68,41 +171,58 @@ function run() {
     process.exit(1);
   }
 
-  const stat = fs.statSync(target);
-  let passed = 0;
-  let failed = 0;
+  if (strict) {
+    console.log(`${CYAN}◆ Strict mode enabled — runtime + env checks active${RESET}\n`);
+  }
+
+  const stat      = fs.statSync(target);
+  const seenPorts = new Map();
+  let passed = 0, failed = 0, strictFailed = 0;
 
   if (stat.isDirectory()) {
-    const entries = fs.readdirSync(target, { withFileTypes: true });
-    const agentDirs = entries.filter(e => e.isDirectory()).map(e => path.join(target, e.name));
-
-    // Check if target itself is an agent (has manifest.json)
     if (fs.existsSync(path.join(target, 'manifest.json'))) {
-      // Single agent dir passed directly
-      const ok = validateAgent(target);
-      ok ? passed++ : failed++;
+      // Single agent dir
+      const result = validateAgent(target, { strict, seenPorts });
+      result.passed ? passed++ : failed++;
+      strictFailed += result.strictErrors || 0;
     } else {
       // Folder of agents
+      const entries  = fs.readdirSync(target, { withFileTypes: true });
+      const agentDirs = entries.filter(e => e.isDirectory()).map(e => path.join(target, e.name));
+
       if (agentDirs.length === 0) {
         console.log(`${YELLOW}⚠ No agent subdirectories found in ${target}${RESET}`);
         process.exit(0);
       }
+
       console.log(`${BOLD}Scanning ${agentDirs.length} agent(s) in ${path.basename(target)}/...${RESET}\n`);
       agentDirs.forEach(dir => {
-        const ok = validateAgent(dir);
-        ok ? passed++ : failed++;
+        const result = validateAgent(dir, { strict, seenPorts });
+        result.passed ? passed++ : failed++;
+        strictFailed += result.strictErrors || 0;
+        if (strict) console.log(); // spacing between agents
       });
     }
   }
 
-  console.log(`\n${BOLD}Results: ${GREEN}${passed} passed${RESET}${BOLD}, ${RED}${failed} failed${RESET}`);
+  // Summary
+  console.log(`\n${BOLD}Results: ${GREEN}${passed} passed${RESET}${BOLD}, ${failed > 0 ? RED : ''}${failed} failed${RESET}`);
+
+  if (strict && strictFailed > 0) {
+    console.log(`${YELLOW}⚠ ${strictFailed} strict error(s) — fix before graduating${RESET}`);
+  }
 
   if (passed === 0 && failed > 0) {
     console.log(`${YELLOW}\nBuild at least 1 valid agent before running npm run graduate${RESET}`);
     process.exit(1);
   }
 
-  process.exit(failed > 0 ? 1 : 0);
+  process.exit(failed > 0 || strictFailed > 0 ? 1 : 0);
 }
 
-run();
+// Allow direct invocation (e.g. npm test calls node cli/validate.js directly)
+if (require.main === module) {
+  run(process.argv.slice(2));
+}
+
+module.exports = { run, validateAgent };

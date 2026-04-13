@@ -3,7 +3,16 @@
     "allow": [
       "Read(//mnt/**)",
       "Read(//h//**)",
-      "Read(//h/the hyper vibe coding hub/**)"
+      "Read(//h/the hyper vibe coding hub/**)",
+      "Bash(node cli/validate.js templates/python-starter/)",
+      "Bash(node cli/validate.js templates/node-starter/)",
+      "Bash(node cli/index.js validate templates/node-starter/ --strict)",
+      "Bash(node cli/index.js validate templates/python-starter/ --strict)",
+      "Bash(node cli/index.js registry build templates/ --out registry.json)",
+      "Bash(node -e \"const r=require\\('./registry.json'\\); console.log\\(JSON.stringify\\(r, null, 2\\)\\)\")",
+      "Bash(node cli/index.js registry search --runtime node)",
+      "Bash(node cli/index.js registry show my-node-agent)",
+      "Bash(node cli/index.js --help)"
     ]
   }
 }
