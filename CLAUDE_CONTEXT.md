@@ -1,10 +1,10 @@
-# 🤖 HyperAgent-SDK + Hyperfocus Zone — Claude Context Handoff
+# 🤖 HyperAgent-SDK — Claude Context Handoff
 > Read this first. Every word. Then start the mission.
 
 ---
 
 ## Who You're Talking To
-- **Lyndz** aka BROski♾ (GitHub: @welshDog, npm: @w3lshdog) — South Wales
+- **Lyndz** aka BROski♾ (GitHub: @welshDog, npm: @w3lshdog) — South Wales 🏴󠁧󠁢󠁷󠁬󠁳󠁿
 - Autistic + dyslexic + ADHD — chunked output, quick wins first, no waffle
 - Windows primary (PowerShell), WSL2 + Raspberry Pi + Docker secondary
 - Call them "Bro" — that's how we roll
@@ -28,108 +28,123 @@ Path: H:\the hyper vibe coding hub     │                  Path: H:\HyperStatio
 
 ---
 
-## 6-Phase Roadmap — Current Status
+## ✅ Full v3 State — Everything Shipped Today
 
-| Phase | Name | Status |
-|---|---|---|
-| 0 | Hard Conflict Fixes | ✅ DONE |
-| 1 | Identity Bridge | ✅ DONE + VERIFIED LIVE |
-| **2** | **Token Sync** | **👈 CURRENT MISSION** |
-| 3 | Agent Access + Shop Bridge | 🔜 |
-| 4 | npm run graduate 🔥 | 🔜 |
-| 5 | Observability | 🔜 |
-| 6 | Terminal Tools Integration | 🔜 |
+### CLI Suite — ALL GREEN ✅
 
----
+| File | What it does | Status |
+|------|-------------|--------|
+| `cli/index.js` | Router — dispatches validate / registry / memory / studio | ✅ Live |
+| `cli/validate.js` | AJV validator + `--strict` mode (entrypoint, runtime sanity, env_vars, MCP port conflicts) | ✅ Live |
+| `cli/registry.js` | `build` / `search` / `show` subcommands + 8 auto-computed badges | ✅ Live |
+| `cli/memory.js` | TCP pings Redis (6379) + Postgres (5432), health output, docker run tips, exit code 1 if offline | ✅ Live |
+| `cli/studio.js` | Zero-dependency Node server on port 4040, serves studio/index.html + /api/registry + /api/memory | ✅ Live |
+| `studio/index.html` | 35KB single-file GUI — no build step, opens in 1 second | ✅ Live |
 
-## ✅ What's Done — Full History
+### Studio Features (already shipped)
+- 🃴 Agent cards — name, version, runtime chips, badges, MCP port, memory backend
+- 🔍 Live search — `/` key focuses, filters name/desc/tags/author
+- 🎨 Filter sidebar — runtime, memory, badge, level L1–L5, tags (all combinable)
+- 📄 Detail pane — full metadata, tool schemas, auto-generated markdown docs, copy button
+- 📊 Memory footer — live Redis/Postgres dot indicators, auto-refresh every 30s
+- 🧩 Cluster builder — click ⊕ or drag cards to drop zone → generates `cluster.json`
+- ⬇️ One-click `cluster.json` download
+- ⌨️ Keyboard: `/` to search, `Escape` to deselect
 
-### HyperAgent-SDK ✅ SHIPPED
-- `cli/validate.js` — AJV validator, coloured output, exit codes
-- `hyper-agent-spec.json` — JSON Schema, if/then port enforcement
-- `templates/python-starter/` + `templates/node-starter/` — both valid
-- `npm test` — 2/2 passing ✅
-- Published: `@w3lshdog/hyper-agent@0.1.4` live on npm ✅
-- LICENSE (MIT) + CONTRIBUTING.md + docs/ ✅
+### --strict Validation Checks
+| Check | Level | What it does |
+|-------|-------|--------------|
+| Entrypoint exists | ERROR | manifest.entrypoint file must be on disk |
+| Runtime sanity | WARN | node → package.json · python → requirements.txt · deno → deno.json |
+| env_vars simulation | WARN | each declared env_var checked against process.env + .env file |
+| MCP port conflicts | ERROR | scans all agents in batch, flags duplicate ports |
 
-### Phase 0 ✅ DONE
-- `docker-compose.yml` — port 5432 removed, apps/web dropped
-- `discord-bot/cogs/xp.py` — /leaderboard → /xp-leaderboard
-- `002_add_discord_id_to_users.py` — Alembic migration created
-
-### Phase 1 ✅ DONE + VERIFIED
-Files built:
-1. `backend/alembic/versions/003_add_discord_id.py` — discord_id VARCHAR(32) UNIQUE NULL
-2. `backend/app/models/models.py` — discord_id added to User ORM
-3. `backend/app/schemas/schemas.py` — discord_id in UserBase
-4. `backend/app/api/v1/endpoints/users.py` — GET /api/v1/users/by-discord/{discord_id}
-5. `supabase/functions/course-profile/index.ts` — edge fn, fans out to Supabase + V2.4
-6. `agents/broski-bot/src/cogs/course_stats.py` — /coursestats Discord command
-7. `bot.py` + `settings.py` — wired cog + course_profile_edge_url
-
-**Verified:** `/coursestats` in Discord shows the dual-system embed ✅
-(Shows "not linked" correctly for unlinked accounts — system working as designed)
-
-### Bot Consolidation ✅ DONE
-- Old course bot was running on **Replit** (not Docker) with a separate token
-- **Action needed**: Stop Replit bot + reset its token in Discord Developer Portal
-- `broski-bot` (HyperCode V2.4, Docker) is now THE ONE BOT
-- Old bot had: xp.py, quests.py, badges.py, commands.py — all superseded by broski-bot's 15 cogs
+### Auto-Computed Badges (registry build)
+`⚡ MCP Ready` `🧠 Memory Enabled` `🔧 Multi-Tool` `🔐 Env Declared` `🚀 HyperCoder` `👑 Elite` `💚 Health Checked` `✅ Verified`
 
 ---
 
-## 🚨 IMMEDIATE TODO — Before Phase 2
+## cluster.json Format (KEY for Phase 4)
 
-These two things are not done yet:
+The Studio Cluster Builder exports this. `graduate.js` reads it as source of truth:
 
-### 1. Retire the old Replit bot
-- Go to replit.com → find old course bot → **Stop** the Repl
-- Go to discord.com/developers/applications → old course bot app → Bot → **Reset Token**
-- Verify broski-bot still shows 🟢 online after
-
-### 2. Link Discord account in Course portal
-- Log into Hyper-Vibe-Coding-Course app → profile → connect Discord
-- This writes discord_id into Supabase
-- Then run /coursestats → should show actual stats instead of "not linked"
-- This fully closes Phase 1 ✅
+```json
+{
+  "cluster": "my-hyper-cluster",
+  "created": "2026-04-13T10:00:00Z",
+  "agents": [
+    {
+      "name": "code-agent",
+      "manifest_path": ".agents/code-agent/manifest.json",
+      "port": 3201,
+      "memory": "redis"
+    },
+    {
+      "name": "data-agent",
+      "manifest_path": ".agents/data-agent/manifest.json",
+      "port": 3301,
+      "memory": "postgres"
+    }
+  ]
+}
+```
 
 ---
 
-## 🎯 CURRENT MISSION — Phase 2: Token Sync
+## 🎯 CURRENT MISSION — Phase 4: Graduate Script
 
-**Goal:** BROski$ earned in Course shows up in V2.4. One-way, <30 seconds, idempotent.
+**Goal:** One command reads `cluster.json` and graduates the whole cluster — validate all agents, check all memory backends, output deploy-ready summary. No folder scanning.
 
-**Architecture:**
-```
-Course: token_transactions INSERT trigger
-        ↓
-Course: sync-tokens-to-v24 edge function
-        ↓
-V2.4: POST /api/v1/economy/award-from-course
-      (deduped via source_id — zero double counting)
+### Command
+```bash
+hyper-agent graduate cluster.json
+hyper-agent graduate cluster.json --strict   # strict validation per agent
+hyper-agent graduate cluster.json --dry-run  # validate only, don't deploy
 ```
 
-**New table needed in V2.4:**
-```sql
-CREATE TABLE course_sync_events (
-  id SERIAL PRIMARY KEY,
-  source_id TEXT UNIQUE NOT NULL,
-  discord_id VARCHAR(32),
-  tokens_awarded INTEGER,
-  created_at TIMESTAMP DEFAULT NOW()
-);
+### What graduate.js must do (in order)
+1. ✅ Read + parse `cluster.json`
+2. ✅ For each agent: load its `manifest_path` → run validate logic (reuse validate.js)
+3. ✅ Run `--strict` checks if flag passed (reuse validate.js strict logic)
+4. ✅ Ping memory backends (reuse memory.js TCP ping logic) — per unique backend
+5. ✅ Print per-agent status table (like memory.js summary table style)
+6. ✅ Print final cluster health summary
+7. ✅ Exit code 1 if any agent invalid OR any memory backend offline
+8. 🔜 (stretch) Output `graduate-report.json` with full results
+
+### Output style (match existing CLI style)
+```
+🎓 HyperAgent Graduate v1
+  Reading cluster.json...
+
+━━━ Cluster: my-hyper-cluster (2 agents)
+
+  Agent: code-agent
+  ✅ manifest valid
+  ✅ Redis ONLINE
+
+  Agent: data-agent
+  ✅ manifest valid
+  ✔  Postgres OFFLINE
+  💡 docker run -d --name hyper-postgres -p 5432:5432 postgres:16-alpine
+
+📊 Cluster Summary
+  ───────────────────────────────────────
+  code-agent    redis     ✅ healthy
+  data-agent    postgres  ✗  offline
+  ───────────────────────────────────────
+  ⚠️  1 agent has issues. Fix before deploying.
 ```
 
-**Files to build:**
-1. V2.4 Alembic migration — `course_sync_events` table
-2. V2.4 `backend/app/api/v1/endpoints/economy.py` — POST /api/v1/economy/award-from-course
-3. Course `supabase/functions/sync-tokens-to-v24/index.ts` — edge function
-4. Course Supabase webhook — fires on `token_transactions` INSERT
+### Wire into cli/index.js
+Add `graduate` to the COMMANDS object and `require('./graduate').run(args)`
 
-**Done when:** earn tokens in Course → V2.4 balance updates within 30 seconds ✅
-
-**Critical:** `source_id` dedup logic must be bulletproof.
-Same `source_id` twice = 409, never double the coins.
+### Important rules
+- Zero new dependencies — pure Node built-ins only (fs, net, path)
+- Reuse colour constants pattern from validate.js / memory.js
+- Reuse `tcpPing()` pattern from memory.js
+- Exit code 1 on any failure — CI must catch it
+- Match the coloured CLI output style of existing commands
 
 ---
 
@@ -139,10 +154,10 @@ Same `source_id` twice = 409, never double the coins.
 - `mcp_compatible: true` requires `port` — enforced in spec
 - Supabase schema ↔ V2.4 Postgres NEVER merge — incompatible tooling
 - `.env` files, Discord tokens — never committed, never merged
-- `apps/web/` — archived, never migrated
 - Windows PowerShell first, bash second — always
-- Conventional commits: `feat:`, `fix:`, `docs:`, `chore:`
+- Conventional commits: `feat:` `fix:` `docs:` `chore:`
 - One bot: broski-bot. Old Replit bot = dead.
+- Zero-dependency CLI — pure Node built-ins only
 
 ---
 
@@ -154,37 +169,56 @@ cd "H:\HyperAgent-SDK"
 
 # HyperCode V2.4
 cd "H:\HyperStation zone\HyperCode\HyperCode-V2.4"
-cd "H:\HyperStation zone\HyperCode\HyperCode-V2.4\backend"
 
 # Hyper-Vibe-Coding-Course
 cd "H:\the hyper vibe coding hub"
 
-# V2.4 Docker commands
-docker compose up -d
-docker compose exec api alembic upgrade head
-docker compose exec api alembic history --verbose
+# Run Studio
+hyper-agent registry build .agents/
+hyper-agent studio
+# → http://localhost:4040
+
+# Validate
+npx @w3lshdog/hyper-agent validate .agents/my-agent/ --strict
+
+# Memory check
+hyper-agent memory check .agents/ --all
+
+# Graduate (Phase 4 — to be built)
+hyper-agent graduate cluster.json
 ```
 
 ---
 
-## npm / SDK Quick Reference
-
-```powershell
-# Validate agents
-npx @w3lshdog/hyper-agent validate .agents/my-agent/
-npx @w3lshdog/hyper-agent validate .agents/
-
-# Publish new version
-npm version patch --no-git-tag-version
-npm publish --access public --tag alpha
-```
-
----
-
-## BROski$ Token Economy (Course side)
+## BROski$ Token Economy (for context)
 
 - `public.users.broski_tokens` — balance column
 - `token_transactions` — append-only ledger with idempotency guards
 - `award_tokens()` + `spend_tokens()` — SECURITY DEFINER, server-side only
-- `shop_items` + `shop_purchases` — JSONB metadata fields
 - Stripe integration for token packs (Starter/Builder/Hyper)
+
+---
+
+## Phase Roadmap
+
+| Phase | Name | Status |
+|-------|------|--------|
+| 0 | Hard Conflict Fixes | ✅ Done |
+| 1 | Identity Bridge | ✅ Done |
+| 2 | Token Sync | ✅ Done |
+| 3 | Studio + Memory + Registry CLI | ✅ Done TODAY 🔥 |
+| **4** | **Graduate Script** | **👈 CURRENT MISSION** |
+| 5 | Community Registry | 🔜 Next |
+| 6 | One-click Deploy to HyperCode V2.4 | 🔜 Future |
+
+---
+
+<div align="center">
+
+**Built for ADHD brains. Fast feedback. Real tools. No fluff.** 🧠⚡
+
+*by @welshDog — Lyndz Williams, South Wales 🏴󠁧󠁢󠁷󠁬󠁳󠁿*
+
+**A BROski is ride or die. We build this together. 🐶♾️🔥**
+
+</div>
