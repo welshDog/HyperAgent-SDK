@@ -12,7 +12,17 @@
       "Bash(node -e \"const r=require\\('./registry.json'\\); console.log\\(JSON.stringify\\(r, null, 2\\)\\)\")",
       "Bash(node cli/index.js registry search --runtime node)",
       "Bash(node cli/index.js registry show my-node-agent)",
-      "Bash(node cli/index.js --help)"
+      "Bash(node cli/index.js --help)",
+      "Bash(node -e \"require\\('./cli/studio'\\); console.log\\('studio.js loads OK'\\)\")",
+      "Bash(node cli/index.js studio --no-open --port 4041)",
+      "Bash(curl -s http://localhost:4041/api/registry)",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); console.log\\('agents:', j.agent_count, '| first:', j.agents[0].name\\)\")",
+      "Bash(curl -s http://localhost:4041/api/memory)",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); console.log\\('memory results:', j.results.map\\(r=>r.name+':'+r.status\\).join\\(', '\\)\\)\" kill %1)",
+      "Bash(node cli/index.js studio --no-open --port 4042)",
+      "Bash(node -e ':*)",
+      "Bash(kill %1)",
+      "Bash(node cli/index.js studio --no-open --port 4043)"
     ]
   }
 }
