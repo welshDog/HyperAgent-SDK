@@ -22,7 +22,11 @@
       "Bash(node cli/index.js studio --no-open --port 4042)",
       "Bash(node -e ':*)",
       "Bash(kill %1)",
-      "Bash(node cli/index.js studio --no-open --port 4043)"
+      "Bash(node cli/index.js studio --no-open --port 4043)",
+      "Bash(node cli/index.js status)",
+      "Bash(node cli/index.js logs --tail 10)",
+      "Bash(node cli/index.js agents list)",
+      "Bash(node cli/index.js tokens award 123456789012345678 100)"
     ]
   }
 }
