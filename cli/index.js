@@ -9,6 +9,7 @@ const DIM   = '\x1b[2m';
 const COMMANDS = {
   validate: 'Validate manifest(s) against the HyperAgent spec',
   registry: 'Build, search, and browse the agent registry',
+  memory:   'Check Redis/Postgres health & get docker run tips',
 };
 
 function usage() {
@@ -17,7 +18,8 @@ function usage() {
   console.log(`  hyper-agent ${CYAN}validate${RESET} <path> ${DIM}[--strict]${RESET}`);
   console.log(`  hyper-agent ${CYAN}registry${RESET} build  <path> ${DIM}[--out registry.json] [--strict]${RESET}`);
   console.log(`  hyper-agent ${CYAN}registry${RESET} search ${DIM}[--tags tag1,tag2] [--runtime node] [--badge mcp-ready] [--level 3]${RESET}`);
-  console.log(`  hyper-agent ${CYAN}registry${RESET} show   <name>\n`);
+  console.log(`  hyper-agent ${CYAN}registry${RESET} show   <name>`);
+  console.log(`  hyper-agent ${CYAN}memory${RESET}   check  <path> ${DIM}[--all] [--redis-host HOST] [--redis-port PORT] [--pg-host HOST] [--pg-port PORT]${RESET}\n`);
   console.log(`${BOLD}Commands:${RESET}`);
   Object.entries(COMMANDS).forEach(([cmd, desc]) => {
     console.log(`  ${CYAN}${cmd.padEnd(10)}${RESET} ${desc}`);
