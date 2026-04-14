@@ -1,13 +1,15 @@
-# 🤖 HyperAgent-SDK — Claude Context Handoff
+# 🤖 BROski Ecosystem — Claude Context Handoff (ALL REPOS SYNCED)
 > Read this first. Every word. Then start the mission.
+> **Last synced: April 14, 2026 — Phases 0–10B COMPLETE ✅ | Stripe Prices LOCKED 🔒**
 
 ---
 
 ## Who You're Talking To
-- **Lyndz** aka BROski♾ (GitHub: @welshDog, npm: @w3lshdog) — South Wales 🏴󠁧󠁢󠁷󠁬󠁳󠁿
+- **Lyndz** aka BROski♾️ (GitHub: @welshDog, npm: @w3lshdog) — South Wales 🏴󠁧󠁢󠁷󠁬󠁳󠁿
 - Autistic + dyslexic + ADHD — chunked output, quick wins first, no waffle
 - Windows primary (PowerShell), WSL2 + Raspberry Pi + Docker secondary
-- Call them "Bro" — that's how we roll
+- Call them **"Bro"** — that's how we roll
+- Short sentences. Emojis. Bold the key stuff. Celebrate wins! 🎉
 
 ---
 
@@ -28,136 +30,168 @@ Path: H:\the hyper vibe coding hub     │                  Path: H:\HyperStatio
 
 ---
 
-## ✅ Full v3 State — Everything Shipped Today
+## 🏆 Full Phase Roadmap — ALL COMPLETE (Phases 0–10B)
 
-### CLI Suite — ALL GREEN ✅
-
-| File | What it does | Status |
-|------|-------------|--------|
-| `cli/index.js` | Router — dispatches validate / registry / memory / studio | ✅ Live |
-| `cli/validate.js` | AJV validator + `--strict` mode (entrypoint, runtime sanity, env_vars, MCP port conflicts) | ✅ Live |
-| `cli/registry.js` | `build` / `search` / `show` subcommands + 8 auto-computed badges | ✅ Live |
-| `cli/memory.js` | TCP pings Redis (6379) + Postgres (5432), health output, docker run tips, exit code 1 if offline | ✅ Live |
-| `cli/studio.js` | Zero-dependency Node server on port 4040, serves studio/index.html + /api/registry + /api/memory | ✅ Live |
-| `studio/index.html` | 35KB single-file GUI — no build step, opens in 1 second | ✅ Live |
-
-### Studio Features (already shipped)
-- 🃴 Agent cards — name, version, runtime chips, badges, MCP port, memory backend
-- 🔍 Live search — `/` key focuses, filters name/desc/tags/author
-- 🎨 Filter sidebar — runtime, memory, badge, level L1–L5, tags (all combinable)
-- 📄 Detail pane — full metadata, tool schemas, auto-generated markdown docs, copy button
-- 📊 Memory footer — live Redis/Postgres dot indicators, auto-refresh every 30s
-- 🧩 Cluster builder — click ⊕ or drag cards to drop zone → generates `cluster.json`
-- ⬇️ One-click `cluster.json` download
-- ⌨️ Keyboard: `/` to search, `Escape` to deselect
-
-### --strict Validation Checks
-| Check | Level | What it does |
-|-------|-------|--------------|
-| Entrypoint exists | ERROR | manifest.entrypoint file must be on disk |
-| Runtime sanity | WARN | node → package.json · python → requirements.txt · deno → deno.json |
-| env_vars simulation | WARN | each declared env_var checked against process.env + .env file |
-| MCP port conflicts | ERROR | scans all agents in batch, flags duplicate ports |
-
-### Auto-Computed Badges (registry build)
-`⚡ MCP Ready` `🧠 Memory Enabled` `🔧 Multi-Tool` `🔐 Env Declared` `🚀 HyperCoder` `👑 Elite` `💚 Health Checked` `✅ Verified`
+| Phase | Name | Status |
+|---|---|---|
+| 0 | Hard Conflict Fixes | ✅ DONE |
+| 1 | Identity Bridge | ✅ DONE + VERIFIED LIVE |
+| 2 | Token Sync | ✅ DONE + VERIFIED LIVE |
+| 3 | Agent Access + Shop Bridge | ✅ DONE + VERIFIED LIVE |
+| 4 | npm run graduate 🔥 | ✅ DONE + VERIFIED LIVE |
+| 5 | Observability | ✅ DONE + VERIFIED LIVE |
+| 6 | Terminal Tools Integration | ✅ DONE + VERIFIED LIVE |
+| 7 | Dockerfile Security Hardening | ✅ DONE — April 14, 2026 |
+| 8 | CI/CD Trivy Security Pipeline | ✅ DONE — April 14, 2026 |
+| 9 | CVE Elimination (apt + pip pinning) | ✅ DONE — April 14, 2026 |
+| 10A | FastAPI / Starlette upgrade | ✅ DONE |
+| 10B | Docker Compose Network Isolation | ✅ DONE — April 14, 2026 |
 
 ---
 
-## cluster.json Format (KEY for Phase 4)
+## 🎯 NEXT UP — Phase 10C+ Candidates
 
-The Studio Cluster Builder exports this. `graduate.js` reads it as source of truth:
+| Option | Phase | Why Now |
+|--------|-------|---------|
+| C | **Secrets management** (Docker secrets / Vault) | `.env` files still used locally — productionise secrets |
+| D | **Agent-level rate limiting + auth** | Add per-agent API keys for internal network |
+| E | **Open bug: CognitiveUplink.tsx ~130** | WS message type `"command"` → `"execute"` |
+| F | **Stripe Checkout integration** | Price IDs locked — wire up Next.js + Supabase webhooks |
 
+---
+
+## 🔒 Stripe Prices — LOCKED (April 14, 2026)
+
+### BROski Token Packs (one-time)
+| Pack | Price | Tokens | Stripe Product Name |
+|---|---|---|---|
+| Starter | £5 GBP | 200 | BROski Starter Pack |
+| Builder | £15 GBP | 800 | BROski Builder Pack |
+| Hyper | £35 GBP | 2500 | BROski Hyper Pack |
+
+### Course Subscriptions (recurring)
+| Tier | Monthly | Yearly | Stripe Product Name |
+|---|---|---|---|
+| Pro | £9/mo | £90/yr | Hyper Vibe Pro Course |
+| Hyper | £29/mo | £290/yr | Hyper Elite |
+
+### Digital Shop Items (paid in BROski$)
+- Prompt Packs: 200 BROski$
+- Templates: 150 BROski$
+- Bonus Lessons: 100 BROski$
+
+### .env keys to add
+```env
+STRIPE_PRICE_STARTER=price_xxx
+STRIPE_PRICE_BUILDER=price_xxx
+STRIPE_PRICE_HYPER=price_xxx
+STRIPE_PRICE_PRO_MONTHLY=price_xxx
+STRIPE_PRICE_PRO_YEARLY=price_xxx
+STRIPE_PRICE_HYPER_MONTHLY=price_xxx
+STRIPE_PRICE_HYPER_YEARLY=price_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+```
+
+---
+
+## 🌐 Phase 10B — Docker Network Topology (LIVE)
+
+- `frontend-net` (bridge, internet) — dashboard, mission-ui, mcp-server
+- `backend-net` (bridge, internet) — hypercode-core (bridges all layers)
+- `agents-net` (bridge, internet) — all AI agents, LLM API calls
+- `data-net` (bridge, **internal: true**) — redis + postgres + minio + chroma
+- `obs-net` (bridge, **internal: true**) — prometheus, grafana, loki, tempo, promtail
+
+Script: `scripts/network-migrate.sh` — run to tear down and recreate safely.
+
+---
+
+## 🛡️ Phase 9 Security Patterns (use in ALL new Dockerfiles)
+
+**Part A — OS hardening (every runtime stage):**
+```dockerfile
+RUN apt-get update --allow-releaseinfo-change && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates curl libexpat1 openssl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+```
+
+**Part B — pip pinning (every Python runtime stage):**
+```dockerfile
+RUN pip install --upgrade --no-cache-dir \
+    "pip==26.0.1" "setuptools>=80.0.0" "wheel==0.46.2" \
+    "jaraco.context>=6.0.0" "jaraco.functools>=4.1.0" "jaraco.text>=4.0.0"
+```
+
+**Base image standard:** `python:3.11-slim` (not pinned patch — CI pulls latest with `--pull`)
+
+---
+
+## ✅ SDK v3 CLI Suite — ALL GREEN
+
+| File | What it does | Status |
+|------|-------------|--------|
+| `cli/index.js` | Router — dispatches validate / registry / memory / studio / graduate | ✅ Live |
+| `cli/validate.js` | AJV validator + `--strict` mode (entrypoint, runtime, env_vars, MCP port conflicts) | ✅ Live |
+| `cli/registry.js` | `build` / `search` / `show` + 8 auto-computed badges | ✅ Live |
+| `cli/memory.js` | TCP pings Redis (6379) + Postgres (5432), health output, docker run tips | ✅ Live |
+| `cli/studio.js` | Zero-dependency Node server on port 4040, serves GUI + /api/registry + /api/memory | ✅ Live |
+| `cli/graduate.js` | Reads cluster.json, validates all agents, checks memory backends, prints summary | ✅ Live |
+| `studio/index.html` | 35KB single-file GUI — no build step, opens in 1 second | ✅ Live |
+
+### cluster.json Format
 ```json
 {
   "cluster": "my-hyper-cluster",
-  "created": "2026-04-13T10:00:00Z",
+  "created": "2026-04-14T18:00:00Z",
   "agents": [
-    {
-      "name": "code-agent",
-      "manifest_path": ".agents/code-agent/manifest.json",
-      "port": 3201,
-      "memory": "redis"
-    },
-    {
-      "name": "data-agent",
-      "manifest_path": ".agents/data-agent/manifest.json",
-      "port": 3301,
-      "memory": "postgres"
-    }
+    { "name": "code-agent", "manifest_path": ".agents/code-agent/manifest.json", "port": 3201, "memory": "redis" },
+    { "name": "data-agent", "manifest_path": ".agents/data-agent/manifest.json", "port": 3301, "memory": "postgres" }
   ]
 }
 ```
 
 ---
 
-## 🎯 CURRENT MISSION — Phase 4: Graduate Script
+## ✅ Full History (condensed)
 
-**Goal:** One command reads `cluster.json` and graduates the whole cluster — validate all agents, check all memory backends, output deploy-ready summary. No folder scanning.
-
-### Command
-```bash
-hyper-agent graduate cluster.json
-hyper-agent graduate cluster.json --strict   # strict validation per agent
-hyper-agent graduate cluster.json --dry-run  # validate only, don't deploy
-```
-
-### What graduate.js must do (in order)
-1. ✅ Read + parse `cluster.json`
-2. ✅ For each agent: load its `manifest_path` → run validate logic (reuse validate.js)
-3. ✅ Run `--strict` checks if flag passed (reuse validate.js strict logic)
-4. ✅ Ping memory backends (reuse memory.js TCP ping logic) — per unique backend
-5. ✅ Print per-agent status table (like memory.js summary table style)
-6. ✅ Print final cluster health summary
-7. ✅ Exit code 1 if any agent invalid OR any memory backend offline
-8. 🔜 (stretch) Output `graduate-report.json` with full results
-
-### Output style (match existing CLI style)
-```
-🎓 HyperAgent Graduate v1
-  Reading cluster.json...
-
-━━━ Cluster: my-hyper-cluster (2 agents)
-
-  Agent: code-agent
-  ✅ manifest valid
-  ✅ Redis ONLINE
-
-  Agent: data-agent
-  ✅ manifest valid
-  ✔  Postgres OFFLINE
-  💡 docker run -d --name hyper-postgres -p 5432:5432 postgres:16-alpine
-
-📊 Cluster Summary
-  ───────────────────────────────────────
-  code-agent    redis     ✅ healthy
-  data-agent    postgres  ✗  offline
-  ───────────────────────────────────────
-  ⚠️  1 agent has issues. Fix before deploying.
-```
-
-### Wire into cli/index.js
-Add `graduate` to the COMMANDS object and `require('./graduate').run(args)`
-
-### Important rules
-- Zero new dependencies — pure Node built-ins only (fs, net, path)
-- Reuse colour constants pattern from validate.js / memory.js
-- Reuse `tcpPing()` pattern from memory.js
-- Exit code 1 on any failure — CI must catch it
-- Match the coloured CLI output style of existing commands
+### Phase 0 ✅ — Port conflicts, xp-leaderboard, Alembic migration
+### Phase 1 ✅ — discord_id bridge, /coursestats Discord command, Edge Function fan-out
+### Phase 2 ✅ — Token sync, CourseSyncEvent ORM, /award-from-course, dedup guards
+### Phase 3 ✅ — AccessProvision, /provision, shop trigger → Discord DM with api_key
+### Phase 4 ✅ — GraduationEvent ORM, /graduate/trigger, Edge Function, Discord Graduate role
+### Phase 5 ✅ — Structured JSON logging, MetricsMiddleware, /health + /metrics, Grafana
+### Phase 6 ✅ — 5 CLI commands verified. Logs routing fix
+### Phase 7 ✅ — 19 Dockerfiles: non-root users, docker group (GID 999), multi-stage rewrites
+### Phase 8 ✅ — trivy-scan.yml (PR gate), trivy-weekly.yml, Makefile scan targets
+### Phase 9 ✅ — CVE result: agent-x 11 CRITICAL → 0 CRITICAL, 55 HIGH → 14 HIGH
+### Phase 10A ✅ — FastAPI upgraded to 0.117+ (fixes starlette HIGH CVE)
+### Phase 10B ✅ — Docker Compose network isolation (data-net + obs-net internal: true)
 
 ---
 
-## Key Technical Decisions (don't re-debate these)
+## 🚨 Key Technical Rules (never re-debate these)
 
-- Port convention: 3100-3199 writing, 3200-3299 code, 3300-3399 data, 3400-3499 discord, 3500-3599 automation
-- `mcp_compatible: true` requires `port` — enforced in spec
-- Supabase schema ↔ V2.4 Postgres NEVER merge — incompatible tooling
-- `.env` files, Discord tokens — never committed, never merged
-- Windows PowerShell first, bash second — always
-- Conventional commits: `feat:` `fix:` `docs:` `chore:`
-- One bot: broski-bot. Old Replit bot = dead.
-- Zero-dependency CLI — pure Node built-ins only
+- **Docker imports:** `from app.X import Y` — NEVER `from backend.app.X import Y`
+- **FastAPI routing:** First-match wins — public routes BEFORE auth-gated compat routes
+- **Alembic down_revision:** Must match EXACT revision string
+- **CLI folder:** All `hyper-agent` commands run from `H:\HyperAgent-SDK`
+- **Port convention:** 3100-3199 writing, 3200-3299 code, 3300-3399 data, 3400-3499 discord, 3500-3599 automation
+- **Supabase ↔ V2.4 Postgres:** NEVER merge schemas
+- **`.env` files:** Never committed — use Docker secrets in production
+- **One bot:** broski-bot. Old Replit bot = dead.
+- **API keys:** `hc_` prefix + `secrets.token_urlsafe(32)` — 43 chars, URL-safe
+- **Zero-dependency CLI:** Pure Node built-ins only
+- **Dockerfiles:** Use `python:3.11-slim` + Part A + Part B — Phase 9 pattern
+- **Trivy target:** 0 CRITICAL. <5 HIGH ideally
+- **GitHub Actions:** Always `--no-cache --pull` in security scanning workflows
+- **jaraco.* packages:** Always pin explicitly
+- **docker-socket agents:** Use `docker-ce-cli` repo, NOT `docker.io`
+- **Network isolation:** Phase 10B complete — `data-net` + `obs-net` are `internal: true`
+- **Conventional commits:** `feat:` `fix:` `docs:` `chore:`
+- **Windows PowerShell first**, bash second — always
 
 ---
 
@@ -184,32 +218,36 @@ npx @w3lshdog/hyper-agent validate .agents/my-agent/ --strict
 # Memory check
 hyper-agent memory check .agents/ --all
 
-# Graduate (Phase 4 — to be built)
+# Graduate cluster
 hyper-agent graduate cluster.json
+hyper-agent graduate cluster.json --strict
+hyper-agent graduate cluster.json --dry-run
+
+# Publish SDK
+npm version patch --no-git-tag-version
+npm publish --access public --tag alpha
 ```
 
 ---
 
-## BROski$ Token Economy (for context)
+## BROski$ Token Economy
 
 - `public.users.broski_tokens` — balance column
 - `token_transactions` — append-only ledger with idempotency guards
 - `award_tokens()` + `spend_tokens()` — SECURITY DEFINER, server-side only
-- Stripe integration for token packs (Starter/Builder/Hyper)
+- `shop_items` + `shop_purchases` — JSONB metadata fields
+- `shop_purchases.item_slug` — used to filter for "agent-sandbox-access"
+- Stripe integration: prices LOCKED April 14, 2026 (see Stripe section above)
 
 ---
 
-## Phase Roadmap
+## 📦 This Repo — HyperAgent-SDK Specifics
 
-| Phase | Name | Status |
-|-------|------|--------|
-| 0 | Hard Conflict Fixes | ✅ Done |
-| 1 | Identity Bridge | ✅ Done |
-| 2 | Token Sync | ✅ Done |
-| 3 | Studio + Memory + Registry CLI | ✅ Done TODAY 🔥 |
-| **4** | **Graduate Script** | **👈 CURRENT MISSION** |
-| 5 | Community Registry | 🔜 Next |
-| 6 | One-click Deploy to HyperCode V2.4 | 🔜 Future |
+- Zero-dependency CLI — pure Node built-ins
+- Published to npm: `@w3lshdog/hyper-agent@0.1.4`
+- Studio GUI served at `http://localhost:4040`
+- `cluster.json` is the source of truth for `graduate` command
+- Next: community registry + one-click deploy to HyperCode V2.4 (Phases 5-6)
 
 ---
 
