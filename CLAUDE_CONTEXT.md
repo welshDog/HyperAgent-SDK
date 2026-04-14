@@ -1,6 +1,6 @@
 # 🤖 BROski Ecosystem — Claude Context Handoff (ALL REPOS SYNCED)
 > Read this first. Every word. Then start the mission.
-> **Last synced: April 14, 2026 — Phases 0–10B COMPLETE ✅ | Stripe Prices LOCKED 🔒**
+> **Last synced: April 14, 2026 — Phases 0–10F COMPLETE ✅ | Stripe Checkout API LIVE 💳**
 
 ---
 
@@ -30,7 +30,7 @@ Path: H:\the hyper vibe coding hub     │                  Path: H:\HyperStatio
 
 ---
 
-## 🏆 Full Phase Roadmap — ALL COMPLETE (Phases 0–10B)
+## 🏆 Full Phase Roadmap
 
 | Phase | Name | Status |
 |---|---|---|
@@ -46,17 +46,43 @@ Path: H:\the hyper vibe coding hub     │                  Path: H:\HyperStatio
 | 9 | CVE Elimination (apt + pip pinning) | ✅ DONE — April 14, 2026 |
 | 10A | FastAPI / Starlette upgrade | ✅ DONE |
 | 10B | Docker Compose Network Isolation | ✅ DONE — April 14, 2026 |
+| 10F | **Stripe Checkout API** | ✅ DONE — April 14, 2026 💳 |
 
 ---
 
-## 🎯 NEXT UP — Phase 10C+ Candidates
+## 💳 Phase 10F — Stripe Checkout API (LIVE — April 14, 2026)
 
-| Option | Phase | Why Now |
-|--------|-------|---------|
-| C | **Secrets management** (Docker secrets / Vault) | `.env` files still used locally — productionise secrets |
-| D | **Agent-level rate limiting + auth** | Add per-agent API keys for internal network |
-| E | **Open bug: CognitiveUplink.tsx ~130** | WS message type `"command"` → `"execute"` |
-| F | **Stripe Checkout integration** | Price IDs locked — wire up Next.js + Supabase webhooks |
+### What was built (in HyperCode-V2.4)
+- `backend/app/routes/stripe.py` — 3 FastAPI endpoints
+- `backend/app/services/stripe_service.py` — all Stripe logic + price map
+- `backend/tests/test_stripe.py` — 4 tests (pytest)
+- `backend/app/main.py` — Stripe router registered, `/api/stripe/webhook` rate-limit exempt
+
+### Live Endpoints
+```
+POST /api/stripe/checkout    → creates Stripe Checkout Session, returns URL
+GET  /api/stripe/plans       → lists available plan names
+POST /api/stripe/webhook     → handles Stripe events (signature verified)
+```
+
+### Webhook events handled
+- `checkout.session.completed` → subscription activated (TODO 10G: write to DB)
+- `customer.subscription.deleted` → subscription cancelled (TODO 10G: downgrade in DB)
+- `invoice.payment_failed` → payment failed warning (TODO 10G: notify user)
+- `customer.subscription.updated` → status change logged
+
+---
+
+## 🎯 NEXT UP — Phase 10G+
+
+| Phase | Task | Why |
+|---|---|---|
+| **10G** | DB — save subscription to Postgres on webhook | Hook `checkout.session.completed` → update users table |
+| **10H** | Frontend — Pricing page + checkout button | Next.js UI wired to `/api/stripe/checkout` |
+| **10I** | Stripe CLI end-to-end local testing | `stripe listen --forward-to localhost:8000/api/stripe/webhook` |
+| **10C** | Secrets management (Docker secrets / Vault) | `.env` files still used locally — productionise |
+| **10D** | Agent-level rate limiting + auth | Per-agent API keys for internal network |
+| **10E** | Open bug: CognitiveUplink.tsx ~130 | WS message type `"command"` → `"execute"` |
 
 ---
 
@@ -82,6 +108,8 @@ Path: H:\the hyper vibe coding hub     │                  Path: H:\HyperStatio
 
 ### .env keys to add
 ```env
+STRIPE_SECRET_KEY=sk_live_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
 STRIPE_PRICE_STARTER=price_xxx
 STRIPE_PRICE_BUILDER=price_xxx
 STRIPE_PRICE_HYPER=price_xxx
@@ -89,7 +117,6 @@ STRIPE_PRICE_PRO_MONTHLY=price_xxx
 STRIPE_PRICE_PRO_YEARLY=price_xxx
 STRIPE_PRICE_HYPER_MONTHLY=price_xxx
 STRIPE_PRICE_HYPER_YEARLY=price_xxx
-STRIPE_WEBHOOK_SECRET=whsec_xxx
 ```
 
 ---
@@ -102,13 +129,11 @@ STRIPE_WEBHOOK_SECRET=whsec_xxx
 - `data-net` (bridge, **internal: true**) — redis + postgres + minio + chroma
 - `obs-net` (bridge, **internal: true**) — prometheus, grafana, loki, tempo, promtail
 
-Script: `scripts/network-migrate.sh` — run to tear down and recreate safely.
-
 ---
 
 ## 🛡️ Phase 9 Security Patterns (use in ALL new Dockerfiles)
 
-**Part A — OS hardening (every runtime stage):**
+**Part A — OS hardening:**
 ```dockerfile
 RUN apt-get update --allow-releaseinfo-change && \
     apt-get upgrade -y && \
@@ -118,14 +143,12 @@ RUN apt-get update --allow-releaseinfo-change && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ```
 
-**Part B — pip pinning (every Python runtime stage):**
+**Part B — pip pinning:**
 ```dockerfile
 RUN pip install --upgrade --no-cache-dir \
     "pip==26.0.1" "setuptools>=80.0.0" "wheel==0.46.2" \
     "jaraco.context>=6.0.0" "jaraco.functools>=4.1.0" "jaraco.text>=4.0.0"
 ```
-
-**Base image standard:** `python:3.11-slim` (not pinned patch — CI pulls latest with `--pull`)
 
 ---
 
@@ -134,24 +157,12 @@ RUN pip install --upgrade --no-cache-dir \
 | File | What it does | Status |
 |------|-------------|--------|
 | `cli/index.js` | Router — dispatches validate / registry / memory / studio / graduate | ✅ Live |
-| `cli/validate.js` | AJV validator + `--strict` mode (entrypoint, runtime, env_vars, MCP port conflicts) | ✅ Live |
+| `cli/validate.js` | AJV validator + `--strict` mode | ✅ Live |
 | `cli/registry.js` | `build` / `search` / `show` + 8 auto-computed badges | ✅ Live |
-| `cli/memory.js` | TCP pings Redis (6379) + Postgres (5432), health output, docker run tips | ✅ Live |
-| `cli/studio.js` | Zero-dependency Node server on port 4040, serves GUI + /api/registry + /api/memory | ✅ Live |
-| `cli/graduate.js` | Reads cluster.json, validates all agents, checks memory backends, prints summary | ✅ Live |
-| `studio/index.html` | 35KB single-file GUI — no build step, opens in 1 second | ✅ Live |
-
-### cluster.json Format
-```json
-{
-  "cluster": "my-hyper-cluster",
-  "created": "2026-04-14T18:00:00Z",
-  "agents": [
-    { "name": "code-agent", "manifest_path": ".agents/code-agent/manifest.json", "port": 3201, "memory": "redis" },
-    { "name": "data-agent", "manifest_path": ".agents/data-agent/manifest.json", "port": 3301, "memory": "postgres" }
-  ]
-}
-```
+| `cli/memory.js` | TCP pings Redis + Postgres, health output | ✅ Live |
+| `cli/studio.js` | Zero-dependency Node server on port 4040 | ✅ Live |
+| `cli/graduate.js` | Reads cluster.json, validates all agents | ✅ Live |
+| `studio/index.html` | 35KB single-file GUI — no build step | ✅ Live |
 
 ---
 
@@ -164,11 +175,12 @@ RUN pip install --upgrade --no-cache-dir \
 ### Phase 4 ✅ — GraduationEvent ORM, /graduate/trigger, Edge Function, Discord Graduate role
 ### Phase 5 ✅ — Structured JSON logging, MetricsMiddleware, /health + /metrics, Grafana
 ### Phase 6 ✅ — 5 CLI commands verified. Logs routing fix
-### Phase 7 ✅ — 19 Dockerfiles: non-root users, docker group (GID 999), multi-stage rewrites
-### Phase 8 ✅ — trivy-scan.yml (PR gate), trivy-weekly.yml, Makefile scan targets
+### Phase 7 ✅ — 19 Dockerfiles: non-root users, multi-stage rewrites
+### Phase 8 ✅ — trivy-scan.yml, trivy-weekly.yml, Makefile scan targets
 ### Phase 9 ✅ — CVE result: agent-x 11 CRITICAL → 0 CRITICAL, 55 HIGH → 14 HIGH
-### Phase 10A ✅ — FastAPI upgraded to 0.117+ (fixes starlette HIGH CVE)
-### Phase 10B ✅ — Docker Compose network isolation (data-net + obs-net internal: true)
+### Phase 10A ✅ — FastAPI upgraded to 0.117+
+### Phase 10B ✅ — Docker Compose network isolation
+### Phase 10F ✅ — Stripe Checkout API: 3 endpoints + service layer + tests + main.py registered
 
 ---
 
@@ -184,9 +196,11 @@ RUN pip install --upgrade --no-cache-dir \
 - **One bot:** broski-bot. Old Replit bot = dead.
 - **API keys:** `hc_` prefix + `secrets.token_urlsafe(32)` — 43 chars, URL-safe
 - **Zero-dependency CLI:** Pure Node built-ins only
-- **Dockerfiles:** Use `python:3.11-slim` + Part A + Part B — Phase 9 pattern
+- **Stripe webhook:** `/api/stripe/webhook` is rate-limit exempt
+- **Stripe dev mode:** Missing `STRIPE_WEBHOOK_SECRET` = signature check skipped (local only)
+- **Dockerfiles:** `python:3.11-slim` + Part A + Part B
 - **Trivy target:** 0 CRITICAL. <5 HIGH ideally
-- **GitHub Actions:** Always `--no-cache --pull` in security scanning workflows
+- **GitHub Actions:** Always `--no-cache --pull`
 - **jaraco.* packages:** Always pin explicitly
 - **docker-socket agents:** Use `docker-ce-cli` repo, NOT `docker.io`
 - **Network isolation:** Phase 10B complete — `data-net` + `obs-net` are `internal: true`
@@ -215,17 +229,20 @@ hyper-agent studio
 # Validate
 npx @w3lshdog/hyper-agent validate .agents/my-agent/ --strict
 
-# Memory check
-hyper-agent memory check .agents/ --all
-
 # Graduate cluster
 hyper-agent graduate cluster.json
-hyper-agent graduate cluster.json --strict
-hyper-agent graduate cluster.json --dry-run
 
 # Publish SDK
 npm version patch --no-git-tag-version
 npm publish --access public --tag alpha
+
+# Stripe (Phase 10F)
+curl -X POST http://localhost:8000/api/stripe/checkout \
+  -H "Content-Type: application/json" \
+  -d '{"price_id": "starter", "user_id": "broski_test"}'
+
+stripe listen --forward-to localhost:8000/api/stripe/webhook
+pytest backend/tests/test_stripe.py -v
 ```
 
 ---
@@ -236,8 +253,7 @@ npm publish --access public --tag alpha
 - `token_transactions` — append-only ledger with idempotency guards
 - `award_tokens()` + `spend_tokens()` — SECURITY DEFINER, server-side only
 - `shop_items` + `shop_purchases` — JSONB metadata fields
-- `shop_purchases.item_slug` — used to filter for "agent-sandbox-access"
-- Stripe integration: prices LOCKED April 14, 2026 (see Stripe section above)
+- Stripe integration: prices LOCKED April 14, 2026 — API LIVE Phase 10F ✅
 
 ---
 
@@ -247,7 +263,7 @@ npm publish --access public --tag alpha
 - Published to npm: `@w3lshdog/hyper-agent@0.1.4`
 - Studio GUI served at `http://localhost:4040`
 - `cluster.json` is the source of truth for `graduate` command
-- Next: community registry + one-click deploy to HyperCode V2.4 (Phases 5-6)
+- Next: community registry + one-click deploy to HyperCode V2.4
 
 ---
 
