@@ -5,7 +5,7 @@
 [![npm](https://img.shields.io/badge/npm-%40w3lshdog%2Fhyper--agent-red)](https://www.npmjs.com/package/@w3lshdog/hyper-agent)
 [![Made by WelshDog](https://img.shields.io/badge/Made_by-WelshDog_🦅-orange)](https://github.com/welshDog)
 [![Part of Hyperfocus Zone](https://img.shields.io/badge/Hyperfocus_Zone-♥️_Ecosystem-purple)](https://github.com/welshDog)
-[![CLI](https://img.shields.io/badge/CLI-v3%20—%20validate%20%7C%20registry%20%7C%20memory%20%7C%20studio-blue)](#)
+[![CLI](https://img.shields.io/badge/CLI-v3%20—%20validate%20%7C%20registry%20%7C%20studio%20%7C%20status%20%7C%20tokens%20%7C%20graduate-blue)](#)
 
 > **"The agent toolkit behind the Hyperfocus Zone — plug in, vibe out."**
 
@@ -233,7 +233,7 @@ hyper-agent registry show my-node-agent
 
 ## 🗺️ Roadmap
 
-### ✅ Shipped (v3)
+### ✅ Shipped (v3 + Phase 6)
 - [x] `cli/index.js` — router entrypoint, clean help output
 - [x] `cli/validate.js` — `--strict` mode with 4 runtime checks
 - [x] `cli/registry.js` — `build`, `search`, `show` + 8 auto-badges
@@ -243,12 +243,17 @@ hyper-agent registry show my-node-agent
 - [x] Cluster builder → `cluster.json` export
 - [x] Live memory health indicators (auto-refresh 30s)
 - [x] `hyper-agent-spec.json` — author-declared badges array
+- [x] `hyper-agent status` — HyperCode V2.4 health check (all services)
+- [x] `hyper-agent logs` — live log tail from HyperCode V2.4
+- [x] `hyper-agent tokens award` — award BROski$ to a student by Discord ID
+- [x] `hyper-agent agents list` — agent heartbeats + online status
+- [x] `hyper-agent graduate` — manually trigger graduation for a student
 
-### 🔜 Phase 4 — Graduate & Community
-- [ ] 🎓 **`npm run graduate`** — reads `cluster.json` directly (port map, manifest paths, memory backends) instead of scanning individual manifests
+### 🔜 Next Up
 - [ ] 🌍 **Community Registry** — public discovery via GitHub Discussions + JSON feed
 - [ ] 👁️ **`--watch` mode** — live re-validation on file change during dev
 - [ ] 🚀 **One-click deploy** — Studio → deploy cluster to HyperCode V2.4
+- [ ] 💳 **`hyper-agent stripe`** — CLI hook for live Stripe Checkout API
 
 ---
 
@@ -261,7 +266,13 @@ HyperAgent-SDK/
 │   ├── validate.js       # Validation (standard + --strict)
 │   ├── registry.js       # Registry build / search / show
 │   ├── memory.js         # Smart Memory Check (Redis + Postgres)
-│   └── studio.js         # 🖥️ HyperAgent Studio server (port 4040)
+│   ├── studio.js         # 🖥️ HyperAgent Studio server (port 4040)
+│   └── commands/
+│       ├── status.js     # HyperCode V2.4 health check
+│       ├── logs.js       # Live log tail
+│       ├── tokens.js     # Award BROski$ by Discord ID
+│       ├── agents.js     # Agent heartbeats + online status
+│       └── graduate.js   # Trigger graduation for a student
 ├── studio/
 │   └── index.html        # 35KB single-file GUI (no build step!)
 ├── docs/                 # Full SDK documentation

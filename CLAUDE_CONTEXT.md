@@ -19,12 +19,12 @@
 Hyper-Vibe-Coding-Course     ──── manifest.json ────▶    HyperCode V2.4
 github.com/welshDog/             (hyper-agent-spec)       github.com/welshDog/
 Hyper-Vibe-Coding-Course                                  HyperCode-V2.4
-(Supabase + Vercel)                    │                  (Docker, 26 containers)
+(Supabase + Vercel)                    │                  (Docker, 29 containers)
 Path: H:\the hyper vibe coding hub     │                  Path: H:\HyperStation zone\
                                        │                       HyperCode\HyperCode-V2.4
                               HyperAgent-SDK
                           github.com/welshDog/HyperAgent-SDK
-                          npm: @w3lshdog/hyper-agent@0.1.4
+                          npm: @w3lshdog/hyper-agent@0.1.6
                           Path: H:\HyperAgent-SDK
 ```
 
@@ -156,12 +156,16 @@ RUN pip install --upgrade --no-cache-dir \
 
 | File | What it does | Status |
 |------|-------------|--------|
-| `cli/index.js` | Router — dispatches validate / registry / memory / studio / graduate | ✅ Live |
+| `cli/index.js` | Router — dispatches all subcommands | ✅ Live |
 | `cli/validate.js` | AJV validator + `--strict` mode | ✅ Live |
 | `cli/registry.js` | `build` / `search` / `show` + 8 auto-computed badges | ✅ Live |
 | `cli/memory.js` | TCP pings Redis + Postgres, health output | ✅ Live |
 | `cli/studio.js` | Zero-dependency Node server on port 4040 | ✅ Live |
-| `cli/graduate.js` | Reads cluster.json, validates all agents | ✅ Live |
+| `cli/commands/status.js` | HyperCode V2.4 health — all services | ✅ Live |
+| `cli/commands/logs.js` | Recent logs from HyperCode V2.4 | ✅ Live |
+| `cli/commands/tokens.js` | Award BROski$ tokens by Discord ID | ✅ Live |
+| `cli/commands/agents.js` | List agent heartbeats + online status | ✅ Live |
+| `cli/commands/graduate.js` | Manually trigger graduation for a student | ✅ Live |
 | `studio/index.html` | 35KB single-file GUI — no build step | ✅ Live |
 
 ---

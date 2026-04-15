@@ -37,7 +37,8 @@ function usage() {
     console.log(`  ${CYAN}${cmd.padEnd(12)}${RESET} ${desc}`);
   });
   console.log(`\n${DIM}Env vars: HYPERCODE_API_URL (default: http://localhost:8000)${RESET}`);
-  console.log(`${DIM}          COURSE_SYNC_SECRET, SHOP_SYNC_SECRET${RESET}\n`);
+  console.log(`${DIM}          COURSE_SYNC_SECRET, SHOP_SYNC_SECRET${RESET}`);
+  console.log(`${DIM}          STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET${RESET}\n`);
 }
 
 const [,, cmd, ...args] = process.argv;
