@@ -25,6 +25,14 @@ const BADGE_RULES = [
   { id: 'health-checked',  label: '💚 Health Checked',  test: m => !!m.health_check },
 ];
 
+/**
+ * Compute the full badge list for a manifest.
+ * Auto-applies rule-based badges and merges self-declared badges (deduped).
+ *
+ * @param {object} manifest - A valid HyperAgent manifest object.
+ * @param {boolean} [verified=false] - Prepend the "verified" badge when true.
+ * @returns {string[]} Array of badge IDs, e.g. `['verified', 'mcp-ready', 'multi-tool']`.
+ */
 function computeBadges(manifest, verified = false) {
   const badges = BADGE_RULES
     .filter(r => r.test(manifest))
@@ -377,4 +385,4 @@ if (require.main === module) {
   run(process.argv.slice(2));
 }
 
-module.exports = { run };
+module.exports = { run, computeBadges, BADGE_RULES };

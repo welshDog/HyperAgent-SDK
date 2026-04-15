@@ -26,7 +26,11 @@
       "Bash(node cli/index.js status)",
       "Bash(node cli/index.js logs --tail 10)",
       "Bash(node cli/index.js agents list)",
-      "Bash(node cli/index.js tokens award 123456789012345678 100)"
+      "Bash(node cli/index.js tokens award 123456789012345678 100)",
+      "Bash(node --test tests/)",
+      "Bash(node --test tests/*.test.js)",
+      "Bash(npm test *)",
+      "Bash(npm pack *)"
     ]
   }
 }

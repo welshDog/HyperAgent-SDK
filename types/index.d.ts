@@ -1,0 +1,137 @@
+/**
+ * @module @w3lshdog/hyper-agent
+ * TypeScript declarations for HyperAgent-SDK public API.
+ */
+
+// ─── Manifest schema types (mirrors hyper-agent-spec.json) ───────────────────
+
+/** Runtime environment for an agent. */
+export type AgentRuntime = 'python' | 'node' | 'deno';
+
+/** Memory backend available to an agent. */
+export type AgentMemory = 'none' | 'redis' | 'postgres';
+
+/** A single tool exposed by an agent. */
+export interface AgentTool {
+  /** snake_case, 3–64 chars. */
+  name: string;
+  /** Human-readable purpose, max 300 chars. */
+  description: string;
+  /** JSON Schema object describing the tool's input. */
+  input_schema: Record<string, unknown>;
+  /** JSON Schema object describing the tool's output (optional). */
+  output_schema?: Record<string, unknown>;
+}
+
+/**
+ * The full HyperAgent manifest — the shared contract between
+ * Hyper-Vibe-Coding-Course, HyperCode V2.4, and the agent registry.
+ *
+ * Validated by AJV against `hyper-agent-spec.json`.
+ */
+export interface HyperAgentManifest {
+  /** kebab-case, 3–50 chars, unique within a deployment. */
+  name: string;
+  /** Semver string, e.g. "0.1.0". */
+  version: string;
+  /** Optional human-readable name, max 80 chars. */
+  display_name?: string;
+  /** Optional description, max 500 chars. */
+  description?: string;
+  /** Author (usually a Discord username or GitHub handle). */
+  author?: string;
+  /** Runtime environment. */
+  runtime: AgentRuntime;
+  /** Path to the entrypoint file relative to the agent directory. */
+  entrypoint: string;
+  /** At least one tool must be declared. */
+  tools: [AgentTool, ...AgentTool[]];
+  /**
+   * Whether the agent implements the MCP protocol.
+   * When `true`, `port` is required.
+   */
+  mcp_compatible: boolean;
+  /** Memory backend. Defaults to "none". */
+  memory?: AgentMemory;
+  /** Environment variable names the agent expects at runtime. */
+  env_vars?: string[];
+  /**
+   * MCP port. Required when `mcp_compatible` is true.
+   * Range 3100–3999 per HyperAgent port convention:
+   * 3100-3199 writing, 3200-3299 code, 3300-3399 data,
+   * 3400-3499 discord, 3500-3599 automation.
+   */
+  port?: number;
+  /** HTTP path used to health-check the agent (e.g. "/health"). */
+  health_check?: string;
+  /** Freeform tags for registry search. */
+  tags?: string[];
+  /**
+   * Course level gate. 1=HyperNewbie, 2=Vibe Coder,
+   * 3=Agent Builder, 4=HyperCoder, 5=BROski Elite.
+   */
+  course_level?: 1 | 2 | 3 | 4 | 5;
+  /**
+   * Author-declared badges (e.g. "featured", "community-pick", "experimental").
+   * Registry auto-computes: verified, mcp-ready, memory-enabled,
+   * multi-tool, elite, hyper-coder, env-declared, health-checked.
+   */
+  badges?: string[];
+}
+
+// ─── validateAgent return type ────────────────────────────────────────────────
+
+/** Result returned by `validateAgent`. */
+export interface ValidationResult {
+  /** Whether the manifest passed AJV schema validation. */
+  passed: boolean;
+  /** Number of strict-mode errors (0 when `--strict` is not used). */
+  strictErrors: number;
+  /** Parsed manifest — only present when `passed` is true. */
+  manifest?: HyperAgentManifest;
+}
+
+/** Options for `validateAgent`. */
+export interface ValidateOptions {
+  /**
+   * Enable strict mode: checks entrypoint file exists on disk,
+   * runtime file present, env vars set, MCP port conflicts.
+   */
+  strict?: boolean;
+  /**
+   * Shared port-conflict map. Pass the same Map across multiple
+   * `validateAgent` calls to detect port conflicts between agents.
+   */
+  seenPorts?: Map<number, string>;
+}
+
+// ─── Public API ───────────────────────────────────────────────────────────────
+
+/**
+ * Validate a single agent directory against the HyperAgent spec.
+ *
+ * @param agentDir - Absolute or relative path to the agent directory
+ *   (must contain `manifest.json`).
+ * @param options - Validation options.
+ * @returns Validation result with pass/fail status, strict error count,
+ *   and the parsed manifest when valid.
+ *
+ * @example
+ * ```js
+ * const { validateAgent } = require('@w3lshdog/hyper-agent');
+ * const result = validateAgent('./my-agent', { strict: true });
+ * if (result.passed) console.log('Agent valid:', result.manifest.name);
+ * ```
+ */
+export function validateAgent(
+  agentDir: string,
+  options?: ValidateOptions
+): ValidationResult;
+
+/**
+ * CLI entry point — runs the `validate` command with the given argv-style
+ * arguments (everything after `hyper-agent validate`).
+ *
+ * @param args - Array of CLI arguments, e.g. `['./my-agent', '--strict']`.
+ */
+export function run(args: string[]): void;

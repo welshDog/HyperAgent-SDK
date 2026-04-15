@@ -96,6 +96,20 @@ function strictChecks(agentDir, manifest, seenPorts) {
 
 // ─── Single agent validation ──────────────────────────────────────────────────
 
+/**
+ * Validate a single agent directory against the HyperAgent spec.
+ *
+ * @param {string} agentDir - Path to the agent directory (must contain `manifest.json`).
+ * @param {object} [options]
+ * @param {boolean} [options.strict=false] - Enable strict mode: checks entrypoint
+ *   file exists on disk, runtime file present, env vars set, MCP port conflicts.
+ * @param {Map<number,string>} [options.seenPorts] - Shared port-conflict map.
+ *   Pass the same Map across multiple calls to detect cross-agent port conflicts.
+ * @returns {{ passed: boolean, strictErrors: number, manifest?: object }}
+ *   `passed` is true when the manifest is schema-valid.
+ *   `strictErrors` counts strict-mode failures (0 when strict is false).
+ *   `manifest` is the parsed manifest when `passed` is true.
+ */
 function validateAgent(agentDir, { strict = false, seenPorts = new Map() } = {}) {
   const manifestPath = path.join(agentDir, 'manifest.json');
 
@@ -151,6 +165,12 @@ function validateAgent(agentDir, { strict = false, seenPorts = new Map() } = {})
 
 // ─── CLI runner ───────────────────────────────────────────────────────────────
 
+/**
+ * CLI entry point for the `validate` command.
+ *
+ * @param {string[]} args - Arguments after `hyper-agent validate`,
+ *   e.g. `['./my-agent', '--strict']`.
+ */
 function run(args) {
   const strict    = args.includes('--strict');
   const pathArgs  = args.filter(a => !a.startsWith('--'));
