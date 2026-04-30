@@ -30,12 +30,15 @@ npm install -D @w3lshdog/hyper-agent
 
 ## 🚀 Quick Start — Build Your First Agent
 
-### 1️⃣ Use a starter template
+### 1️⃣ Scaffold from a starter template
 ```bash
-cp -r node_modules/@w3lshdog/hyper-agent/templates/python-starter .agents/my-agent
+# pick one: python | node | typescript | mcp
+npx @w3lshdog/hyper-agent init my-agent --template python
 ```
 
-### 2️⃣ Define your `manifest.json`
+This copies the template, renames `manifest.name` + `package.json` to match your dir, and prints the next steps.
+
+### 2️⃣ Edit your `manifest.json`
 ```json
 {
   "name": "my-broski-agent",
@@ -62,20 +65,44 @@ cp -r node_modules/@w3lshdog/hyper-agent/templates/python-starter .agents/my-age
 
 ### 3️⃣ Full workflow
 ```bash
-# Validate
-npx @w3lshdog/hyper-agent validate .agents/my-agent/
+# Validate (with friendly error hints — kebab-case, semver, port range, etc.)
+npx @w3lshdog/hyper-agent validate ./my-agent
 
-# Strict mode (CI/production)
-npx @w3lshdog/hyper-agent validate .agents/my-agent/ --strict
+# Strict mode (CI/production — checks entrypoint exists, env vars, port conflicts)
+npx @w3lshdog/hyper-agent validate ./my-agent --strict
 
 # Check memory health
-npx @w3lshdog/hyper-agent memory check .agents/my-agent/
+npx @w3lshdog/hyper-agent memory check ./my-agent
 
 # Build registry then launch Studio
 hyper-agent registry build .agents/
 hyper-agent studio
 # → http://localhost:4040 opens automatically 🖥️
 ```
+
+---
+
+## 🔁 Token Sync (Course → V2.4) — `awardFromCourse()`
+
+The SDK ships a typed, server-only helper for the cross-repo token sync flow:
+
+```typescript
+import { awardFromCourse } from '@w3lshdog/hyper-agent/client';
+
+const result = await awardFromCourse({
+  sourceId:  txn.id,                  // ≤128 chars, idempotency key
+  discordId: user.discord_id,         // ≤32 chars
+  tokens:    50,                      // integer 1..10000
+  reason:    'Course module complete' // optional, ≤255 chars
+});
+// → 200: { source_id, awarded, coins_balance, xp_balance, level }
+// → 409: { source_id, duplicate: true, detail }   (idempotent replay — no double award)
+// → throws AwardFromCourseError                   (validation/timeout/4xx/5xx, with .code + .status)
+```
+
+**Defaults:** `baseUrl = process.env.HYPERCODE_API_URL || 'http://localhost:8000'`, `secret = process.env.COURSE_SYNC_SECRET`, `timeoutMs = 5000` (via `AbortController`).
+
+**Server-only by design** — refuses to run in a browser environment so `COURSE_SYNC_SECRET` can never leak into a client bundle.
 
 ---
 

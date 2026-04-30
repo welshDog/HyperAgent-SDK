@@ -1,6 +1,6 @@
 # HyperAgent SDK — AGENT_SYNC_NOTES
 
-> Last updated: 2026-04-27 | Ecosystem: HyperCode-V2.4 · Hyper-Vibe-Coding-Course · BROskiPets-LLM-dNFT · HyperAgent-SDK
+> Last updated: 2026-04-30 | Ecosystem: HyperCode-V2.4 · Hyper-Vibe-Coding-Course · BROskiPets-LLM-dNFT · HyperAgent-SDK
 
 ---
 
@@ -12,25 +12,32 @@
 
 ---
 
-## 📦 Required Exports (Minimum)
+## 📦 Shipped Exports
 
-### `awardFromCourse()`
+### `awardFromCourse()` — **LIVE in 0.3.0** ✅
 
 ```typescript
+import { awardFromCourse } from '@w3lshdog/hyper-agent/client';
+
 awardFromCourse({
-  sourceId: string,   // idempotency key (= token_transactions.id)
-  discordId: string,  // cross-repo identity key
-  tokens: number,     // must be >= 0
-  reason: string,
-}): Promise<{ source_id: string }>
+  sourceId: string,   // idempotency key (= token_transactions.id), ≤128 chars
+  discordId: string,  // cross-repo identity key, ≤32 chars
+  tokens: number,     // integer, 1..10000 (matches V2.4 server: gt=0, le=10000)
+  reason?: string,    // ≤255 chars, defaults to "Course reward"
+}, options?: {
+  baseUrl?: string,   // default: process.env.HYPERCODE_API_URL || 'http://localhost:8000'
+  secret?: string,    // default: process.env.COURSE_SYNC_SECRET
+  timeoutMs?: number, // default: 5000
+}): Promise<AwardFromCourseResult>
 ```
 
-**Behaviour:**
-- Validates `tokens >= 0` before calling
-- Sends `X-Sync-Secret` header (server-side only)
-- Includes request timeout
-- Throws on non-200/non-409 responses
-- Returns `source_id` on success or `409`
+**Behaviour (verified by 14 tests in `tests/client.test.js`):**
+- Validates `tokens` is integer in 1..10000 before any network call
+- Sends `X-Sync-Secret` header (server-side only, refuses in browser)
+- `AbortController` request timeout (default 5 s)
+- Returns `{ source_id, awarded, coins_balance, xp_balance, level, ... }` on 200
+- Returns `{ source_id, duplicate: true, detail }` on 409 (no double award)
+- Throws `AwardFromCourseError` with `.code` (`INVALID_TOKENS`, `MISSING_SECRET`, `TIMEOUT`, `BAD_STATUS`, etc.) and `.status` on other failures
 
 ---
 
@@ -59,5 +66,16 @@ awardFromCourse({
 ## ⚠️ Security Stance
 
 - Any "sync secret" usage is **server-only**
-- SDK defines the contract types but enforces safe-by-default patterns
-- Never ship `COURSE_SYNC_SECRET` to the browser — mark clearly in types/docs if needed
+- SDK enforces this at runtime: `awardFromCourse()` throws `AwardFromCourseError` with `code: 'BROWSER_FORBIDDEN'` if invoked in a browser env
+- Never ship `COURSE_SYNC_SECRET` to the browser — `awardFromCourse` refuses to run
+
+---
+
+## 🛣️ Plan B (next) — Course Repo Migration
+
+The SDK helper is shipped. The remaining work lives in `H:\the hyper vibe coding hub`:
+
+- Replace any raw `fetch('/api/v1/economy/award-from-course', ...)` with
+  `import { awardFromCourse } from '@w3lshdog/hyper-agent/client'`
+- Bump the Course repo's `@w3lshdog/hyper-agent` dep to `^0.3.0`
+- Verify token sync still happens <30 s end-to-end and stays idempotent
