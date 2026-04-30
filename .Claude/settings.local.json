@@ -34,7 +34,10 @@
       "Bash(node cli/index.js init --help)",
       "Bash(node cli/index.js)",
       "Bash(mkdir -p /tmp/bad-agent)",
-      "Bash(node cli/index.js validate /tmp/bad-agent)"
+      "Bash(node cli/index.js validate /tmp/bad-agent)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
