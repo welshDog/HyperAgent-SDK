@@ -135,3 +135,90 @@ export function validateAgent(
  * @param args - Array of CLI arguments, e.g. `['./my-agent', '--strict']`.
  */
 export function run(args: string[]): void;
+
+// ─── awardFromCourse client (subpath: "@w3lshdog/hyper-agent/client") ─────────
+//
+// These types describe `cli/client.js`. Import via:
+//   import { awardFromCourse } from '@w3lshdog/hyper-agent/client';
+//
+// SECURITY: COURSE_SYNC_SECRET is server-only — never call from a browser bundle.
+
+/** Input to {@link awardFromCourse}. */
+export interface AwardFromCourseInput {
+  /** Idempotency key (e.g. token_transactions.id). Max 128 chars. */
+  sourceId: string;
+  /** Discord snowflake. Max 32 chars. */
+  discordId: string;
+  /** Integer 1..10000. */
+  tokens: number;
+  /** Optional human-readable reason. Max 255 chars. Defaults to "Course reward". */
+  reason?: string;
+}
+
+/** Options passed alongside {@link AwardFromCourseInput}. */
+export interface AwardFromCourseOptions {
+  /** V2.4 base URL. Defaults to `process.env.HYPERCODE_API_URL` or `http://localhost:8000`. */
+  baseUrl?: string;
+  /** Shared secret. Defaults to `process.env.COURSE_SYNC_SECRET`. Server-only. */
+  secret?: string;
+  /** Request timeout in ms. Default 5000. */
+  timeoutMs?: number;
+  /** Custom fetch implementation (used by tests). Defaults to global `fetch`. */
+  fetch?: typeof fetch;
+}
+
+/** Result returned by {@link awardFromCourse}. Always includes `source_id`. */
+export interface AwardFromCourseResult {
+  /** The idempotency key. Always present. */
+  source_id: string;
+  /** True when the server returned 409 (already processed). */
+  duplicate?: boolean;
+  /** Whether the award was applied (200 only). */
+  awarded?: boolean;
+  coins_balance?: number;
+  xp_balance?: number;
+  level?: number;
+  /** Server-supplied detail/message on 409. */
+  detail?: string;
+  [key: string]: unknown;
+}
+
+/** Error thrown by {@link awardFromCourse} for validation, network, or non-2xx/409 responses. */
+export class AwardFromCourseError extends Error {
+  name: 'AwardFromCourseError';
+  /** HTTP status when the failure came from a response. */
+  status?: number;
+  /**
+   * Stable failure code for programmatic handling.
+   * One of: `INVALID_INPUT`, `INVALID_SOURCE_ID`, `INVALID_DISCORD_ID`,
+   * `INVALID_TOKENS`, `INVALID_REASON`, `MISSING_SECRET`, `NO_FETCH`,
+   * `BROWSER_FORBIDDEN`, `TIMEOUT`, `NETWORK`, `BAD_STATUS`.
+   */
+  code?: string;
+  cause?: unknown;
+}
+
+/**
+ * Award BROski$ tokens from the Course repo to a HyperCode V2.4 user.
+ *
+ * - **Server-only** — refuses to run in a browser environment.
+ * - **Idempotent** via `sourceId`: replaying returns `{ source_id, duplicate: true }`.
+ * - **Times out** via `AbortController` (default 5000 ms).
+ *
+ * @example
+ * ```ts
+ * import { awardFromCourse } from '@w3lshdog/hyper-agent/client';
+ *
+ * const result = await awardFromCourse({
+ *   sourceId: txn.id,
+ *   discordId: user.discord_id,
+ *   tokens: 50,
+ *   reason: 'Course module complete',
+ * });
+ * console.log(result.source_id, result.duplicate);
+ * ```
+ */
+export function awardFromCourse(
+  input: AwardFromCourseInput,
+  options?: AwardFromCourseOptions,
+): Promise<AwardFromCourseResult>;

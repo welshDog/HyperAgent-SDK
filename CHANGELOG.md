@@ -6,6 +6,22 @@ Format: [Semantic Versioning](https://semver.org/) — `feat:` `fix:` `docs:` `c
 
 ---
 
+## [0.3.0] — April 30, 2026
+
+### feat
+- `awardFromCourse()` typed client — Phase 3 token sync helper, exported as `@w3lshdog/hyper-agent/client`
+- Server-only by design — refuses to run in browser environments (`COURSE_SYNC_SECRET` never leaks)
+- Idempotent via `sourceId`: replays return `{ source_id, duplicate: true }` (no double award)
+- `AbortController` request timeout (default 5 s)
+- Stable error codes: `INVALID_TOKENS`, `MISSING_SECRET`, `TIMEOUT`, `BAD_STATUS`, etc.
+- TypeScript types for `AwardFromCourseInput`, `AwardFromCourseOptions`, `AwardFromCourseResult`, `AwardFromCourseError`
+
+### chore
+- Added 14 unit tests against a local mock V2.4 server
+- Honours the contract in `AGENT_SYNC_NOTES.md` — Course repo can now `import { awardFromCourse } from '@w3lshdog/hyper-agent/client'`
+
+---
+
 ## [0.2.0] — April 30, 2026
 
 ### feat
