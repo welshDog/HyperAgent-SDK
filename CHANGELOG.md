@@ -6,6 +6,20 @@ Format: [Semantic Versioning](https://semver.org/) — `feat:` `fix:` `docs:` `c
 
 ---
 
+## [0.2.0] — April 30, 2026
+
+### feat
+- `init` command — scaffold a new agent from a template: `hyper-agent init my-bot --template python|node|typescript|mcp`
+- `typescript-starter` template — TypeScript agent with `tsconfig.json` and `tsx`-based dev loop
+- `mcp-starter` template — MCP-compatible agent on port 3200 with `@modelcontextprotocol/sdk` skeleton
+- Validator UX overhaul — AJV errors now mapped to human-readable hints (kebab-case, semver, port range, MCP-required-port, unknown-field, missing-required), de-duplicated, and linked back to the spec
+
+### chore
+- `npm test:templates` extended to validate all 4 starters
+- Version 0.2.0 bundles the Phase 2 starter-pack expansion
+
+---
+
 ## [0.1.6] — April 15, 2026
 
 ### feat

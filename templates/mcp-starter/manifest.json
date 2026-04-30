@@ -1,0 +1,28 @@
+{
+  "name": "my-mcp-agent",
+  "version": "0.1.0",
+  "display_name": "My MCP Agent",
+  "description": "A starter MCP-compatible agent for the Hyperfocus Zone ecosystem",
+  "author": "your-discord-username",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "tools": [
+    {
+      "name": "hello_world",
+      "description": "Returns a greeting via MCP. Replace this with your real tool.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Who to greet" }
+        },
+        "required": ["name"]
+      }
+    }
+  ],
+  "mcp_compatible": true,
+  "port": 3200,
+  "memory": "none",
+  "health_check": "/health",
+  "tags": ["starter", "mcp", "node"],
+  "course_level": 3
+}

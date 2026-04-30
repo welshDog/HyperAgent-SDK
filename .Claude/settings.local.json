@@ -30,7 +30,11 @@
       "Bash(node --test tests/)",
       "Bash(node --test tests/*.test.js)",
       "Bash(npm test *)",
-      "Bash(npm pack *)"
+      "Bash(npm pack *)",
+      "Bash(node cli/index.js init --help)",
+      "Bash(node cli/index.js)",
+      "Bash(mkdir -p /tmp/bad-agent)",
+      "Bash(node cli/index.js validate /tmp/bad-agent)"
     ]
   }
 }

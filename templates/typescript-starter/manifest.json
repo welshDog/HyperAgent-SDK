@@ -1,0 +1,26 @@
+{
+  "name": "my-typescript-agent",
+  "version": "0.1.0",
+  "display_name": "My TypeScript Agent",
+  "description": "A starter TypeScript agent for the Hyperfocus Zone ecosystem",
+  "author": "your-discord-username",
+  "runtime": "node",
+  "entrypoint": "src/index.ts",
+  "tools": [
+    {
+      "name": "hello_world",
+      "description": "Returns a greeting. Replace this with your real tool.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Who to greet" }
+        },
+        "required": ["name"]
+      }
+    }
+  ],
+  "mcp_compatible": false,
+  "memory": "none",
+  "tags": ["starter", "typescript"],
+  "course_level": 2
+}

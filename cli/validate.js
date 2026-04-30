@@ -22,6 +22,52 @@ const DIM    = '\x1b[2m';
 const RESET  = '\x1b[0m';
 const BOLD   = '\x1b[1m';
 
+// ─── AJV → human hint mapping ─────────────────────────────────────────────────
+
+const HINTS = {
+  '/name': "must be kebab-case (3-50 chars, e.g. 'my-cool-agent')",
+  '/version': "must be semver (e.g. '0.1.0', not 'v1' or '1.0')",
+  '/runtime': "must be one of: python | node | deno",
+  '/mcp_compatible': "must be a boolean (true/false)",
+  '/port': "must be an integer in range 3100-3999 (writing/code/data/discord/automation)",
+  '/memory': "must be one of: none | redis | postgres",
+  '/course_level': "must be an integer 1-5 (1=HyperNewbie, 5=BROski Elite)",
+};
+
+function humanError(err) {
+  const ip = err.instancePath || '(root)';
+  const directHint = HINTS[ip];
+  if (directHint) return `${ip}: ${directHint}`;
+
+  // Tools array: /tools/0/name etc.
+  if (ip.startsWith('/tools/')) {
+    const segs = ip.split('/');
+    const idx = segs[2];
+    const field = segs[3];
+    if (field === 'name') return `tools[${idx}].name: must be snake_case (3-64 chars, e.g. 'fetch_data')`;
+    if (field === 'description') return `tools[${idx}].description: max 300 chars`;
+    if (!field) return `tools[${idx}]: ${err.message}`;
+    return `tools[${idx}].${field}: ${err.message}`;
+  }
+
+  // Missing required prop
+  if (err.keyword === 'required') {
+    return `${ip || '(root)'}: missing required field '${err.params.missingProperty}'`;
+  }
+
+  // mcp_compatible:true but no port
+  if (err.keyword === 'if' || (err.schemaPath && err.schemaPath.includes('then/required'))) {
+    return `port is required when mcp_compatible:true (use 3100-3999)`;
+  }
+
+  // Additional properties not allowed
+  if (err.keyword === 'additionalProperties') {
+    return `${ip || '(root)'}: unknown field '${err.params.additionalProperty}' (check spelling)`;
+  }
+
+  return `${ip}: ${err.message}`;
+}
+
 // ─── Strict checks ────────────────────────────────────────────────────────────
 
 function parseEnvFile(agentDir) {
@@ -130,9 +176,14 @@ function validateAgent(agentDir, { strict = false, seenPorts = new Map() } = {})
 
   if (!valid) {
     console.log(`${RED}✗ ${manifest.name || path.basename(agentDir)} — INVALID manifest${RESET}`);
+    const seen = new Set();
     validate.errors.forEach(err => {
-      console.log(`  ${YELLOW}→ ${err.instancePath || '(root)'}: ${err.message}${RESET}`);
+      const msg = humanError(err);
+      if (seen.has(msg)) return;
+      seen.add(msg);
+      console.log(`  ${YELLOW}→ ${msg}${RESET}`);
     });
+    console.log(`  ${DIM}Spec: hyper-agent-spec.json — see github.com/welshDog/HyperAgent-SDK${RESET}`);
     return { passed: false, strictErrors: 0 };
   }
 

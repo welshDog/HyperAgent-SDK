@@ -1,6 +1,6 @@
 {
   "name": "@w3lshdog/hyper-agent",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "Shared agent interface standard for the Hyperfocus Zone ecosystem — validate manifests, scaffold agents",
   "main": "cli/validate.js",
   "types": "types/index.d.ts",
@@ -14,7 +14,7 @@
   "scripts": {
     "validate": "node cli/index.js validate",
     "test": "node --test tests/*.test.js",
-    "test:templates": "node cli/validate.js templates/python-starter/ && node cli/validate.js templates/node-starter/ && echo 'All templates valid ✅'",
+    "test:templates": "node cli/validate.js templates/python-starter/ && node cli/validate.js templates/node-starter/ && node cli/validate.js templates/typescript-starter/ && node cli/validate.js templates/mcp-starter/ && echo 'All templates valid ✅'",
     "test:strict": "node cli/index.js validate templates/ --strict",
     "registry:build": "node cli/index.js registry build templates/ --out registry.json",
     "studio": "node cli/index.js studio"

@@ -205,4 +205,16 @@ describe('built-in templates', () => {
     const result = validateAgent(path.join(TEMPLATES_DIR, 'python-starter'));
     assert.equal(result.passed, true, 'python-starter manifest should be valid');
   });
+
+  test('typescript-starter template is valid', () => {
+    const result = validateAgent(path.join(TEMPLATES_DIR, 'typescript-starter'));
+    assert.equal(result.passed, true, 'typescript-starter manifest should be valid');
+  });
+
+  test('mcp-starter template is valid', () => {
+    const result = validateAgent(path.join(TEMPLATES_DIR, 'mcp-starter'));
+    assert.equal(result.passed, true, 'mcp-starter manifest should be valid');
+    assert.equal(result.manifest.mcp_compatible, true);
+    assert.equal(result.manifest.port, 3200);
+  });
 });

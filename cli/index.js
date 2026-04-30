@@ -7,6 +7,7 @@ const RESET = '\x1b[0m';
 const DIM   = '\x1b[2m';
 
 const COMMANDS = {
+  init:     'Scaffold a new agent from a template (python|node|typescript|mcp)',
   validate: 'Validate manifest(s) against the HyperAgent spec',
   registry: 'Build, search, and browse the agent registry',
   memory:   'Check Redis/Postgres health & get docker run tips',
@@ -21,6 +22,7 @@ const COMMANDS = {
 function usage() {
   console.log(`\n${BOLD}hyper-agent${RESET} — HyperAgent SDK CLI v${require('../package.json').version}\n`);
   console.log(`${BOLD}Usage:${RESET}`);
+  console.log(`  hyper-agent ${CYAN}init${RESET}      ${DIM}[target-dir]${RESET} --template ${DIM}<python|node|typescript|mcp>${RESET}`);
   console.log(`  hyper-agent ${CYAN}validate${RESET}  <path> ${DIM}[--strict]${RESET}`);
   console.log(`  hyper-agent ${CYAN}registry${RESET}  build  <path> ${DIM}[--out registry.json] [--strict]${RESET}`);
   console.log(`  hyper-agent ${CYAN}registry${RESET}  search ${DIM}[--tags tag1,tag2] [--runtime node]${RESET}`);
@@ -48,10 +50,10 @@ if (!cmd || cmd === '--help' || cmd === '-h') {
   process.exit(0);
 }
 
-// Phase 6 commands live in cli/commands/
-const PHASE6 = ['status', 'logs', 'tokens', 'agents', 'graduate'];
+// Phase 6 + Phase 2 commands live in cli/commands/
+const SUBCOMMAND_DIR = ['init', 'status', 'logs', 'tokens', 'agents', 'graduate'];
 
-if (PHASE6.includes(cmd)) {
+if (SUBCOMMAND_DIR.includes(cmd)) {
   require(`./commands/${cmd}`).run(args);
 } else if (COMMANDS[cmd]) {
   require(`./${cmd}`).run(args);
