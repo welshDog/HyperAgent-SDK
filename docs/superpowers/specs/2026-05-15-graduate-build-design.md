@@ -75,7 +75,7 @@ Source of truth for the build command.
   - `name`: string (used in output folder + compose service name)
   - `manifest_path`: path to a `manifest.json`
   - `port`: integer (required if manifest `mcp_compatible` is true; validated by strict validator)
-  - `memory`: `none | redis | postgres` (used for compose env injection)
+  - `memory`: `none | redis | postgres` (optional; defaults to `none` if omitted)
 
 ---
 
@@ -166,7 +166,7 @@ All Dockerfiles should:
 - Any `manifest_path` missing or not a file
 - Any strict validation errors on manifests
 - Port collisions within the cluster (regardless of runtime)
-- Manifest `mcp_compatible: true` but port missing or outside 3100–3999
+- Manifest `mcp_compatible: true` but port missing or outside 3100–3999 (current V2.4 convention)
 
 ### Output quality
 - Human output: short, scan-friendly, with a final table:
@@ -185,4 +185,29 @@ All Dockerfiles should:
 
 ### Docs drift
 README currently references “npm run graduate” in roadmap language. The v1 implementation will provide `hyper-agent graduate build` and `hyper-agent graduate trigger`. If README references conflict, update to match.
+
+---
+
+## Generated README requirements
+
+The generated `--out/README.md` should include copy/paste snippets for both flows:
+
+### Standalone run
+- `docker compose -f docker-compose.agents.yml up -d --build`
+
+### Join HyperCode V2.4 network (snippet)
+Include a short snippet showing how to set the network as external:
+
+```yaml
+networks:
+  agents-net:
+    external: true
+    name: hypercode-v2-4_agents-net
+```
+
+And a one-liner to find the real network name:
+
+```bash
+docker network ls | findstr agents-net
+```
 
