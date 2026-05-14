@@ -16,7 +16,7 @@ const COMMANDS = {
   logs:     'View recent logs from HyperCode V2.4',
   tokens:   'Award BROski$ tokens to a student by Discord ID',
   agents:   'List all agent heartbeats and online status',
-  graduate: 'Manually trigger graduation for a student',
+  graduate: 'Build a V2.4 bundle or trigger graduation for a student',
 };
 
 function usage() {
@@ -33,6 +33,8 @@ function usage() {
   console.log(`  hyper-agent ${CYAN}logs${RESET}      ${DIM}[--tail 50] [--json]${RESET}`);
   console.log(`  hyper-agent ${CYAN}tokens${RESET}    award <discord_id> <amount> ${DIM}[--json]${RESET}`);
   console.log(`  hyper-agent ${CYAN}agents${RESET}    list ${DIM}[--json]${RESET}`);
+  console.log(`  hyper-agent ${CYAN}graduate${RESET}  build <cluster.json> --out <dir> ${DIM}[--strict] [--json]${RESET}`);
+  console.log(`  hyper-agent ${CYAN}graduate${RESET}  trigger <discord_id> ${DIM}[--tokens 500] [--json]${RESET}`);
   console.log(`  hyper-agent ${CYAN}graduate${RESET}  <discord_id> ${DIM}[--tokens 500] [--json]${RESET}\n`);
   console.log(`${BOLD}Commands:${RESET}`);
   Object.entries(COMMANDS).forEach(([cmd, desc]) => {

@@ -169,7 +169,7 @@ The Cluster Builder exports `cluster.json` — a portable deployment config:
 }
 ```
 
-> 💡 **Phase 4:** `cluster.json` feeds directly into `npm run graduate` — reads manifest paths, port map, and memory backends instead of scanning individual manifests.
+> 💡 **Phase 4:** `cluster.json` feeds directly into `hyper-agent graduate build` — reads manifest paths, port map, and memory backends instead of scanning individual manifests.
 
 ---
 
@@ -274,7 +274,7 @@ hyper-agent registry show my-node-agent
 - [x] `hyper-agent logs` — live log tail from HyperCode V2.4
 - [x] `hyper-agent tokens award` — award BROski$ to a student by Discord ID
 - [x] `hyper-agent agents list` — agent heartbeats + online status
-- [x] `hyper-agent graduate` — manually trigger graduation for a student
+- [x] `hyper-agent graduate` — `build` a V2.4 deployment bundle or `trigger` graduation for a student
 
 ### 🔜 Next Up
 - [ ] 🌍 **Community Registry** — public discovery via GitHub Discussions + JSON feed

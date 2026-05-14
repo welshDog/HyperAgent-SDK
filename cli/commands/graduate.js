@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// hyper-agent graduate <discord_id> — manually triggers graduation for a student
+// hyper-agent graduate — build bundle or trigger graduation
 
 const BOLD  = '\x1b[1m';
 const GREEN = '\x1b[32m';
@@ -10,18 +10,62 @@ const RESET = '\x1b[0m';
 
 function usage() {
   console.log(`\n${BOLD}Usage:${RESET}`);
+  console.log(`  hyper-agent graduate ${CYAN}build${RESET} <cluster.json> --out <dir> ${DIM}[--strict] [--json]${RESET}`);
+  console.log(`  hyper-agent graduate ${CYAN}trigger${RESET} <discord_id> ${DIM}[--tokens 500] [--json]${RESET}`);
   console.log(`  hyper-agent graduate ${CYAN}<discord_id>${RESET} ${DIM}[--tokens 500] [--json]${RESET}`);
   console.log(`\n${BOLD}Example:${RESET}`);
-  console.log(`  hyper-agent graduate 123456789\n`);
+  console.log(`  hyper-agent graduate build cluster.json --out out/\n`);
+  console.log(`  hyper-agent graduate trigger 123456789\n`);
+}
+
+function pickArgValue(args, name) {
+  const idx = args.indexOf(name);
+  if (idx === -1) return null;
+  const v = args[idx + 1];
+  if (!v || v.startsWith('--')) return null;
+  return v;
+}
+
+function isFlag(args, name) {
+  return args.includes(name);
 }
 
 async function run(args) {
-  const json       = args.includes('--json');
-  const discordId  = args.filter(a => !a.startsWith('--'))[0];
-  const tokensIdx  = args.indexOf('--tokens');
-  const tokens     = tokensIdx !== -1 ? parseInt(args[tokensIdx + 1], 10) : 500;
-  const baseUrl    = process.env.HYPERCODE_API_URL || 'http://localhost:8000';
-  const secret     = process.env.SHOP_SYNC_SECRET || '';
+  const json = isFlag(args, '--json');
+  const strict = isFlag(args, '--strict');
+
+  const head = args[0];
+  const mode = head === 'build' || head === 'trigger' ? head : 'trigger';
+  const rest = mode === 'trigger' && head !== 'trigger' && head !== 'build' ? args : args.slice(1);
+
+  if (mode === 'build') {
+    const clusterPath = rest.filter(a => !a.startsWith('--'))[0];
+    const outDir = pickArgValue(rest, '--out');
+    if (!clusterPath || !outDir) {
+      usage();
+      process.exit(1);
+    }
+
+    const { buildGraduateBundle } = require('../lib/graduateBuild');
+    try {
+      const result = await buildGraduateBundle({ clusterPath, outDir, strict });
+      if (json) return console.log(JSON.stringify(result, null, 2));
+      console.log(`\n${GREEN}✅ Bundle created${RESET}`);
+      console.log(`  ${CYAN}${result.outDir}${RESET}`);
+      console.log(`  agents: ${result.agents.length}`);
+      return;
+    } catch (e) {
+      if (json) return console.log(JSON.stringify({ error: e.message }));
+      console.error(`${RED}✗ Build failed: ${e.message}${RESET}\n`);
+      process.exit(1);
+    }
+  }
+
+  const discordId = rest.filter(a => !a.startsWith('--'))[0];
+  const tokensRaw = pickArgValue(rest, '--tokens');
+  const tokens = tokensRaw ? parseInt(tokensRaw, 10) : 500;
+  const baseUrl = process.env.HYPERCODE_API_URL || 'http://localhost:8000';
+  const secret = process.env.COURSE_SYNC_SECRET || process.env.SHOP_SYNC_SECRET || '';
 
   if (!discordId) {
     usage();
