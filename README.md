@@ -106,6 +106,46 @@ const result = await awardFromCourse({
 
 ---
 
+## ⛓️ Web3 / dNFT Agents (spec v0.4.0+)
+
+Agents that touch the chain — minting, evolving, or reading **dynamic NFTs** (the
+BROskiPets pet-evolve model) — declare an optional `web3` block in their manifest:
+
+```json
+{
+  "name": "pet-mint-agent",
+  "version": "0.1.0",
+  "runtime": "node",
+  "entrypoint": "index.js",
+  "tools": [
+    { "name": "mint_pet", "description": "Mint a BROskiPet dNFT", "input_schema": {} }
+  ],
+  "mcp_compatible": false,
+  "web3": {
+    "chain": "base-sepolia",
+    "token_standard": "ERC-721",
+    "dnft": true,
+    "contract_address": "0xabc1230000000000000000000000000000000000",
+    "capabilities": ["mint", "evolve", "read-metadata"],
+    "signer_env_var": "PET_SIGNER_KEY"
+  }
+}
+```
+
+| Field | Notes |
+|---|---|
+| `chain` | `base` · `base-sepolia` · `ethereum` · `ethereum-sepolia` — **required** |
+| `capabilities` | one or more of `mint` `evolve` `transfer` `burn` `read-metadata` `read-balance` — **required** |
+| `token_standard` | `ERC-721` (default) · `ERC-1155` · `ERC-20` |
+| `dnft` | `true` = on-chain metadata mutates over the token lifecycle |
+| `contract_address` | `0x` + 40 hex chars |
+| `signer_env_var` | env var **name** only — keys live in Docker secrets, never the manifest |
+
+The block is **optional and additive** — existing manifests stay valid. Any agent with
+a `web3` block earns the `⛓️ web3-enabled` registry badge; `dnft: true` also earns `🛂 dnft`.
+
+---
+
 ## 🖥️ HyperAgent Studio
 
 A **zero-dependency visual GUI** for your agent ecosystem. No build step. No npm install. Opens in 1 second.

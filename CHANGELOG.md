@@ -6,6 +6,21 @@ Format: [Semantic Versioning](https://semver.org/) — `feat:` `fix:` `docs:` `c
 
 ---
 
+## [0.4.0] — May 22, 2026
+
+### feat
+- **Web3/dNFT manifest types** — new optional `web3` block in `hyper-agent-spec.json` for agents that read or write on-chain state. Fields: `chain` (base / base-sepolia / ethereum / ethereum-sepolia), `token_standard` (ERC-721 / ERC-1155 / ERC-20), `dnft` (dynamic-NFT flag — the BROskiPets pet-evolve model), `contract_address` (`0x` + 40 hex), `capabilities` (mint / evolve / transfer / burn / read-metadata / read-balance), `signer_env_var`
+- Two new registry auto-badges — `⛓️ web3-enabled` (any `web3` block) and `🛂 dnft` (`web3.dnft === true`)
+- TypeScript types — `AgentWeb3`, `Web3Chain`, `TokenStandard`, `Web3Capability`, exported and mirrored on `HyperAgentManifest.web3`
+- Validator hints for `web3.chain`, `web3.contract_address`, `web3.token_standard`
+
+### chore
+- Non-breaking + additive: `web3` is optional — every existing manifest still validates
+- New unit tests — `web3` schema validation (8 cases) + the two new badge rules (4 cases)
+- npm version bumped 0.3.0 → 0.4.0 (Sacred Rule #4: Web3/dNFT spec types require a v0.4.0 bump)
+
+---
+
 ## [0.3.0] — April 30, 2026
 
 ### feat

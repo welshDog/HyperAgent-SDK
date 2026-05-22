@@ -152,6 +152,81 @@ describe('validateAgent — schema validation', () => {
   });
 });
 
+// ─── Web3 / dNFT block tests (spec v0.4.0) ───────────────────────────────────
+
+describe('validateAgent — web3 block (spec v0.4.0)', () => {
+  const withWeb3 = web3 => ({ ...VALID_MANIFEST, web3 });
+
+  test('passes with a minimal valid web3 block', () => {
+    const dir    = makeTempAgent(withWeb3({ chain: 'base-sepolia', capabilities: ['mint'] }));
+    const result = validateAgent(dir);
+    rmTemp(dir);
+    assert.equal(result.passed, true);
+    assert.equal(result.manifest.web3.chain, 'base-sepolia');
+  });
+
+  test('passes with a full dNFT web3 block', () => {
+    const dir = makeTempAgent(withWeb3({
+      chain: 'base',
+      token_standard: 'ERC-721',
+      dnft: true,
+      contract_address: '0x' + 'a'.repeat(40),
+      capabilities: ['mint', 'evolve', 'read-metadata'],
+      signer_env_var: 'PET_SIGNER_KEY',
+    }));
+    const result = validateAgent(dir);
+    rmTemp(dir);
+    assert.equal(result.passed, true);
+    assert.equal(result.manifest.web3.dnft, true);
+  });
+
+  test('a manifest with no web3 block is still valid (backward compatible)', () => {
+    const dir    = makeTempAgent(VALID_MANIFEST);
+    const result = validateAgent(dir);
+    rmTemp(dir);
+    assert.equal(result.passed, true);
+  });
+
+  test('fails when web3.chain is not an allowed chain', () => {
+    const dir    = makeTempAgent(withWeb3({ chain: 'solana', capabilities: ['mint'] }));
+    const result = validateAgent(dir);
+    rmTemp(dir);
+    assert.equal(result.passed, false);
+  });
+
+  test('fails when web3.capabilities is empty', () => {
+    const dir    = makeTempAgent(withWeb3({ chain: 'base', capabilities: [] }));
+    const result = validateAgent(dir);
+    rmTemp(dir);
+    assert.equal(result.passed, false);
+  });
+
+  test('fails when web3.contract_address is not a 0x EVM address', () => {
+    const dir = makeTempAgent(withWeb3({
+      chain: 'base', capabilities: ['mint'], contract_address: 'not-an-address',
+    }));
+    const result = validateAgent(dir);
+    rmTemp(dir);
+    assert.equal(result.passed, false);
+  });
+
+  test('fails when web3 has an unknown field', () => {
+    const dir = makeTempAgent(withWeb3({
+      chain: 'base', capabilities: ['mint'], bogus: true,
+    }));
+    const result = validateAgent(dir);
+    rmTemp(dir);
+    assert.equal(result.passed, false);
+  });
+
+  test('fails when web3 is missing required chain', () => {
+    const dir    = makeTempAgent(withWeb3({ capabilities: ['mint'] }));
+    const result = validateAgent(dir);
+    rmTemp(dir);
+    assert.equal(result.passed, false);
+  });
+});
+
 // ─── Strict mode tests ────────────────────────────────────────────────────────
 
 describe('validateAgent — strict mode', () => {

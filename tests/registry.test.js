@@ -88,6 +88,34 @@ describe('computeBadges — auto-computed badges', () => {
     const badges = computeBadges({ ...BASE, health_check: '/health' });
     assert.ok(badges.includes('health-checked'));
   });
+
+  test('web3-enabled badge when a web3 block is present', () => {
+    const badges = computeBadges({
+      ...BASE, web3: { chain: 'base-sepolia', capabilities: ['mint'] },
+    });
+    assert.ok(badges.includes('web3-enabled'));
+  });
+
+  test('no web3-enabled badge when web3 is absent', () => {
+    const badges = computeBadges(BASE);
+    assert.ok(!badges.includes('web3-enabled'));
+  });
+
+  test('dnft badge when web3.dnft is true', () => {
+    const badges = computeBadges({
+      ...BASE, web3: { chain: 'base', dnft: true, capabilities: ['mint', 'evolve'] },
+    });
+    assert.ok(badges.includes('dnft'));
+    assert.ok(badges.includes('web3-enabled'));
+  });
+
+  test('no dnft badge when web3 present but dnft not true', () => {
+    const badges = computeBadges({
+      ...BASE, web3: { chain: 'base', capabilities: ['read-balance'] },
+    });
+    assert.ok(badges.includes('web3-enabled'));
+    assert.ok(!badges.includes('dnft'));
+  });
 });
 
 describe('computeBadges — verified flag', () => {

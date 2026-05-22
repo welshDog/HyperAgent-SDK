@@ -93,7 +93,47 @@
     "badges": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "Author-declared badges (e.g. featured, community-pick, experimental). Registry auto-computes: verified, mcp-ready, memory-enabled, multi-tool, elite, hyper-coder, env-declared, health-checked"
+      "description": "Author-declared badges (e.g. featured, community-pick, experimental). Registry auto-computes: verified, mcp-ready, memory-enabled, multi-tool, elite, hyper-coder, env-declared, health-checked, web3-enabled, dnft"
+    },
+    "web3": {
+      "type": "object",
+      "description": "Optional Web3/dNFT capability block (spec v0.4.0+). Present when an agent reads or writes on-chain state — minting, evolving, or reading dynamic NFTs (the BROskiPets dNFT pet model). Omit entirely for non-Web3 agents.",
+      "additionalProperties": false,
+      "required": ["chain", "capabilities"],
+      "properties": {
+        "chain": {
+          "enum": ["base", "base-sepolia", "ethereum", "ethereum-sepolia"],
+          "description": "Target EVM chain. base-sepolia is the BROskiPets testnet default."
+        },
+        "token_standard": {
+          "enum": ["ERC-721", "ERC-1155", "ERC-20"],
+          "default": "ERC-721",
+          "description": "Token standard of the contract. dNFT pets are ERC-721."
+        },
+        "dnft": {
+          "type": "boolean",
+          "default": false,
+          "description": "True when the token is a dynamic NFT — on-chain metadata mutates over the token lifecycle (the BROskiPets pet-evolve model)."
+        },
+        "contract_address": {
+          "type": "string",
+          "pattern": "^0x[a-fA-F0-9]{40}$",
+          "description": "EVM contract address the agent interacts with — 0x followed by 40 hex chars."
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["mint", "evolve", "transfer", "burn", "read-metadata", "read-balance"]
+          },
+          "description": "On-chain actions the agent performs. mint + evolve together = full dNFT lifecycle."
+        },
+        "signer_env_var": {
+          "type": "string",
+          "description": "Name of the env var holding the signer/RPC credential — the NAME only. Keys live in Docker secrets, never in the manifest."
+        }
+      }
     }
   },
   "if": {

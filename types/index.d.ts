@@ -11,6 +11,51 @@ export type AgentRuntime = 'python' | 'node' | 'deno';
 /** Memory backend available to an agent. */
 export type AgentMemory = 'none' | 'redis' | 'postgres';
 
+/** EVM chain an agent's Web3 block targets. */
+export type Web3Chain = 'base' | 'base-sepolia' | 'ethereum' | 'ethereum-sepolia';
+
+/** Token standard of a Web3 contract. */
+export type TokenStandard = 'ERC-721' | 'ERC-1155' | 'ERC-20';
+
+/** A single on-chain action an agent can perform. */
+export type Web3Capability =
+  | 'mint'
+  | 'evolve'
+  | 'transfer'
+  | 'burn'
+  | 'read-metadata'
+  | 'read-balance';
+
+/**
+ * Optional Web3/dNFT capability block (spec v0.4.0+).
+ *
+ * Present when an agent reads or writes on-chain state — minting,
+ * evolving, or reading dynamic NFTs (the BROskiPets dNFT pet model).
+ */
+export interface AgentWeb3 {
+  /** Target EVM chain. `base-sepolia` is the BROskiPets testnet default. */
+  chain: Web3Chain;
+  /** Token standard of the contract. Defaults to "ERC-721". */
+  token_standard?: TokenStandard;
+  /**
+   * True when the token is a dynamic NFT — on-chain metadata mutates
+   * over the token lifecycle (the BROskiPets pet-evolve model).
+   */
+  dnft?: boolean;
+  /** EVM contract address — `0x` followed by 40 hex chars. */
+  contract_address?: string;
+  /**
+   * On-chain actions the agent performs. At least one required.
+   * `mint` + `evolve` together = full dNFT lifecycle.
+   */
+  capabilities: [Web3Capability, ...Web3Capability[]];
+  /**
+   * Name of the env var holding the signer/RPC credential — the NAME only.
+   * Keys live in Docker secrets, never in the manifest.
+   */
+  signer_env_var?: string;
+}
+
 /** A single tool exposed by an agent. */
 export interface AgentTool {
   /** snake_case, 3–64 chars. */
@@ -74,9 +119,16 @@ export interface HyperAgentManifest {
   /**
    * Author-declared badges (e.g. "featured", "community-pick", "experimental").
    * Registry auto-computes: verified, mcp-ready, memory-enabled,
-   * multi-tool, elite, hyper-coder, env-declared, health-checked.
+   * multi-tool, elite, hyper-coder, env-declared, health-checked,
+   * web3-enabled, dnft.
    */
   badges?: string[];
+  /**
+   * Optional Web3/dNFT capability block (spec v0.4.0+).
+   * Declares on-chain interaction — chain, contract, and capabilities.
+   * Omit entirely for non-Web3 agents.
+   */
+  web3?: AgentWeb3;
 }
 
 // ─── validateAgent return type ────────────────────────────────────────────────

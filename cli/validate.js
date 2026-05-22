@@ -32,6 +32,9 @@ const HINTS = {
   '/port': "must be an integer in range 3100-3999 (writing/code/data/discord/automation)",
   '/memory': "must be one of: none | redis | postgres",
   '/course_level': "must be an integer 1-5 (1=HyperNewbie, 5=BROski Elite)",
+  '/web3/chain': "must be one of: base | base-sepolia | ethereum | ethereum-sepolia",
+  '/web3/contract_address': "must be a 0x-prefixed 40-hex-char EVM address",
+  '/web3/token_standard': "must be one of: ERC-721 | ERC-1155 | ERC-20",
 };
 
 function humanError(err) {

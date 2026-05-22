@@ -23,6 +23,8 @@ const BADGE_RULES = [
   { id: 'hyper-coder',     label: '🚀 HyperCoder',      test: m => (m.course_level || 0) >= 4 },
   { id: 'elite',           label: '👑 Elite',           test: m => (m.course_level || 0) >= 5 },
   { id: 'health-checked',  label: '💚 Health Checked',  test: m => !!m.health_check },
+  { id: 'web3-enabled',    label: '⛓️ Web3 Enabled',   test: m => !!m.web3 },
+  { id: 'dnft',            label: '🛂 dNFT',            test: m => m.web3?.dnft === true },
 ];
 
 /**

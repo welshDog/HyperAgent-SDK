@@ -8,7 +8,7 @@
 
 ## 📍 What This Repo Is
 
-- **npm package:** `@w3lshdog/hyper-agent` (published as `0.1.7`, code is `0.3.0`)
+- **npm package:** `@w3lshdog/hyper-agent` (published as `0.1.7`, code is `0.4.0`)
 - **Purpose:** Shared agent interface standard for HyperCode V2.4 + Hyper-Vibe-Coding-Course
 - **Local path:** `H:\HyperAgent-SDK`
 - **Write agents once, deploy anywhere in the Hyperfocus Zone ecosystem**
@@ -22,7 +22,7 @@
 | 1 | **`hyper-agent-spec.json` is the contract — never break its schema** | V2.4 + Course both consume it | Breaking changes crash agent loading in both repos |
 | 2 | **Bump npm version before publishing** | `0.1.7` on npm ≠ `0.3.0` in code — don’t make this worse | Consumers silently get wrong version |
 | 3 | **`graduate build` + `graduate trigger` CLI = DESIGNED, not yet implemented** | Design doc: `2026-05-15-graduate-build-design.md` | Don’t ship half-built CLI — it’s the next sprint |
-| 4 | **NEVER add Web3/dNFT types to spec without bumping to v0.4.0** | Spec versioning keeps Course + V2.4 in sync | Silent schema drift |
+| 4 | **Web3/dNFT `web3` block landed in spec + code v0.4.0 (May 22)** — any further schema change ships with another version bump | Spec versioning keeps Course + V2.4 in sync | Silent schema drift |
 | 5 | **Commits: `feat:` `fix:` `docs:` `chore:` only** | Conventional commits, same as all repos | Changelog breaks |
 | 6 | **`COURSE_SYNC_SECRET` first → fallback `SHOP_SYNC_SECRET`** | Graduate trigger auth priority | Wrong secret = auth failure on trigger |
 
