@@ -21,7 +21,7 @@
 |---|---|---|---|
 | 1 | **`hyper-agent-spec.json` is the contract — never break its schema** | V2.4 + Course both consume it | Breaking changes crash agent loading in both repos |
 | 2 | **Bump npm version before publishing** | `0.1.7` on npm ≠ `0.3.0` in code — don’t make this worse | Consumers silently get wrong version |
-| 3 | **`graduate build` + `graduate trigger` CLI = DESIGNED, not yet implemented** | Design doc: `2026-05-15-graduate-build-design.md` | Don’t ship half-built CLI — it’s the next sprint |
+| 3 | **`graduate build` + `graduate trigger` CLI = IMPLEMENTED ✅** (`cli/commands/graduate.js`, `cli/lib/graduateBuild.js`, 3 tests green) | Design doc: `2026-05-15-graduate-build-design.md` | — |
 | 4 | **Web3/dNFT `web3` block landed in spec + code v0.4.0 (May 22)** — any further schema change ships with another version bump | Spec versioning keeps Course + V2.4 in sync | Silent schema drift |
 | 5 | **Commits: `feat:` `fix:` `docs:` `chore:` only** | Conventional commits, same as all repos | Changelog breaks |
 | 6 | **`COURSE_SYNC_SECRET` first → fallback `SHOP_SYNC_SECRET`** | Graduate trigger auth priority | Wrong secret = auth failure on trigger |
@@ -43,7 +43,7 @@ AGENT_SYNC_NOTES.md             — sync notes between repos
 
 ---
 
-## ⚡ Graduate Build — Design Ready, Implement Next
+## ⚡ Graduate Build — IMPLEMENTED ✅
 
 ```bash
 hyper-agent graduate build <cluster.json> --out <dir> [--strict] [--json]
@@ -59,7 +59,8 @@ out/
   agents/<agent-name>/manifest.json
 ```
 
-> Status: **DESIGNED ✅ May 15** — implementation is the next sprint task.
+> Status: **IMPLEMENTED ✅** — `cli/commands/graduate.js` + `cli/lib/graduateBuild.js`,
+> covered by `tests/graduate-build.test.js` (3 tests green). Designed May 15, shipped since.
 
 ---
 
