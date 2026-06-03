@@ -30,7 +30,7 @@
     "adhd"
   ],
   "author": "welshDog",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/welshDog/HyperAgent-SDK.git"
