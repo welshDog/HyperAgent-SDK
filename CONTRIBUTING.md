@@ -1,72 +1,24 @@
-# Contributing to HyperAgent-SDK 🤖⚡
+# Contributing to HyperAgent-SDK
 
-Built for ADHD brains — so is this guide. Short. Clear. No fluff.
+First off — thank you! 🧠 This is an npm package for AI agent orchestration and we welcome all contributors.
 
----
+## 🌟 How to Contribute
 
-## What You Can Contribute
+1. **Fork** the repo
+2. **Create a branch** — `git checkout -b feature/your-idea`
+3. **Make your changes**
+4. **Run tests** — `npm test`
+5. **Validate templates** — `npm run test:templates`
+6. **Push + open a PR**
 
-- **New starter templates** — `templates/python-starter`, `templates/node-starter`, etc.
-- **Validator improvements** — better error messages in `cli/validate.js`
-- **Spec updates** — new optional fields for `hyper-agent-spec.json`
-- **Bug fixes** — if validate gives a wrong result, fix it
+## ⚠️ Rules
 
----
+- Never commit `.env` files or secrets
+- Keep `package.json` licence as `AGPL-3.0`
+- Validate all agent manifests before PRing
 
-## The 3-Step Flow
+## 💬 Questions?
 
-```bash
-# 1. Fork + clone
-git clone https://github.com/YOUR_NAME/HyperAgent-SDK.git
+Open a [Discussion](https://github.com/welshDog/HyperAgent-SDK/discussions) or check the README.
 
-# 2. Make your change
-
-# 3. Test your change
-node cli/validate.js templates/python-starter/
-node cli/validate.js templates/node-starter/
-```
-
-If both templates validate cleanly → you're good to PR.
-
----
-
-## Commit Style
-
-We use conventional commits:
-
-```
-feat: add deno-starter template
-fix: validate.js false positive on empty tools array
-docs: clarify mcp_compatible port requirement
-chore: bump ajv to 8.x
-```
-
----
-
-## New Template Checklist
-
-Every template in `templates/` must have:
-
-- [ ] `manifest.json` — valid against `hyper-agent-spec.json`
-- [ ] `README.md` — what the agent does + how to run it
-- [ ] At least one tool with a real `input_schema` (not empty `{}`)
-- [ ] Entrypoint file (`main.py` or `index.js`)
-
----
-
-## Spec Changes
-
-Adding a new field to `hyper-agent-spec.json`?
-
-- Make it **optional** unless there's a compelling reason it's required
-- Add a `description` to the field
-- Update the README field tables
-- Test that existing templates still validate
-
----
-
-## Questions?
-
-Open an issue. Or ping `@welshDog` on GitHub.
-
-Built with 🧠⚡ in South Wales.
+*HyperFocus Zone — Stop apologising for your brain. Start building.* ✨
