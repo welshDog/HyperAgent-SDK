@@ -10,7 +10,7 @@
 
 - **npm package:** `@w3lshdog/hyper-agent` (published as `0.1.7`, code is `0.4.0`)
 - **Purpose:** Shared agent interface standard for HyperCode V2.4 + Hyper-Vibe-Coding-Course
-- **Local path:** `H:\HyperAgent-SDK`
+- **Local path:** `H:\HYPERFOCUSZONE\HperCore\HyperAgent-SDK`
 - **Write agents once, deploy anywhere in the Hyperfocus Zone ecosystem**
 
 ---
@@ -20,7 +20,7 @@
 | # | Rule | Why | Consequence if broken |
 |---|---|---|---|
 | 1 | **`hyper-agent-spec.json` is the contract — never break its schema** | V2.4 + Course both consume it | Breaking changes crash agent loading in both repos |
-| 2 | **Bump npm version before publishing** | `0.1.7` on npm ≠ `0.3.0` in code — don’t make this worse | Consumers silently get wrong version |
+| 2 | **Bump npm version before publishing** | `0.1.7` on npm ≠ `0.4.0` in code — don't make this worse | Consumers silently get wrong version |
 | 3 | **`graduate build` + `graduate trigger` CLI = IMPLEMENTED ✅** (`cli/commands/graduate.js`, `cli/lib/graduateBuild.js`, 3 tests green) | Design doc: `2026-05-15-graduate-build-design.md` | — |
 | 4 | **Web3/dNFT `web3` block landed in spec + code v0.4.0 (May 22)** — any further schema change ships with another version bump | Spec versioning keeps Course + V2.4 in sync | Silent schema drift |
 | 5 | **Commits: `feat:` `fix:` `docs:` `chore:` only** | Conventional commits, same as all repos | Changelog breaks |
@@ -33,7 +33,10 @@
 ```
 hyper-agent-spec.json           — THE contract (agent manifest schema)
 package.json                    — npm package config
-cli/                            — graduate build + trigger CLI (TODO: implement)
+cli/                            — graduate build + trigger CLI ✅ IMPLEMENTED
+cli/commands/graduate.js        — graduate build + trigger entry point
+cli/lib/graduateBuild.js        — build logic (generates docker-compose + manifests)
+cli/lib/yaml.js                 — YAML helper
 types/                          — TypeScript types
 templates/                      — agent scaffold templates
 .agents/                        — agent manifests
