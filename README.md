@@ -1,11 +1,12 @@
 # 🤖 HyperAgent-SDK
 ### Write Agents Once. Deploy Anywhere.
 
+[![npm version](https://img.shields.io/npm/v/@w3lshdog/hyper-agent?color=red&label=npm)](https://www.npmjs.com/package/@w3lshdog/hyper-agent)
+[![npm downloads](https://img.shields.io/npm/dm/@w3lshdog/hyper-agent?color=blue)](https://www.npmjs.com/package/@w3lshdog/hyper-agent)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![npm](https://img.shields.io/badge/npm-%40w3lshdog%2Fhyper--agent-red)](https://www.npmjs.com/package/@w3lshdog/hyper-agent)
 [![Made by WelshDog](https://img.shields.io/badge/Made_by-WelshDog_🦅-orange)](https://github.com/welshDog)
-[![Part of Hyperfocus Zone](https://img.shields.io/badge/Hyperfocus_Zone-♥️_Ecosystem-purple)](https://github.com/welshDog)
-[![CLI](https://img.shields.io/badge/CLI-v3%20—%20validate%20%7C%20registry%20%7C%20studio%20%7C%20status%20%7C%20tokens%20%7C%20graduate-blue)](#)
+[![Part of Hyperfocus Zone](https://img.shields.io/badge/Hyperfocus_Zone-♾️_Ecosystem-purple)](https://github.com/welshDog)
+[![CLI](https://img.shields.io/badge/CLI-validate%20%7C%20registry%20%7C%20studio%20%7C%20status%20%7C%20tokens%20%7C%20graduate-blue)](#)
 
 > **"The agent toolkit behind the Hyperfocus Zone — plug in, vibe out."**
 
@@ -16,11 +17,32 @@ Build once, deploy across Discord bots, FastAPI backends, and course platforms. 
 
 ---
 
-## ⚡ Install
+## ⚡ 60-Second Quickstart
 
 ```bash
-# Validate an agent instantly (no install needed)
-npx @w3lshdog/hyper-agent validate .agents/my-agent/
+# 1. Scaffold your first agent (no install needed)
+npx @w3lshdog/hyper-agent init my-agent --template python
+
+# 2. Validate it
+npx @w3lshdog/hyper-agent validate ./my-agent
+
+# 3. Launch the visual Studio
+npx @w3lshdog/hyper-agent studio
+# → Opens http://localhost:4040 automatically 🖥️
+```
+
+That's it. Your agent is scaffolded, validated, and visible in the Studio. 🎉
+
+---
+
+## 📦 Install
+
+```bash
+# Run instantly without installing (recommended for quick use)
+npx @w3lshdog/hyper-agent <command>
+
+# Install globally for daily use
+npm install -g @w3lshdog/hyper-agent
 
 # Install as a dev dependency (for CI pipelines)
 npm install -D @w3lshdog/hyper-agent
@@ -28,7 +50,7 @@ npm install -D @w3lshdog/hyper-agent
 
 ---
 
-## 🚀 Quick Start — Build Your First Agent
+## 🚀 Full Workflow — Build Your First Agent
 
 ### 1️⃣ Scaffold from a starter template
 ```bash
@@ -75,8 +97,8 @@ npx @w3lshdog/hyper-agent validate ./my-agent --strict
 npx @w3lshdog/hyper-agent memory check ./my-agent
 
 # Build registry then launch Studio
-hyper-agent registry build .agents/
-hyper-agent studio
+npx @w3lshdog/hyper-agent registry build .agents/
+npx @w3lshdog/hyper-agent studio
 # → http://localhost:4040 opens automatically 🖥️
 ```
 
@@ -152,14 +174,14 @@ A **zero-dependency visual GUI** for your agent ecosystem. No build step. No npm
 
 ```bash
 # 1. Build your registry
-hyper-agent registry build .agents/
+npx @w3lshdog/hyper-agent registry build .agents/
 
 # 2. Launch Studio
-hyper-agent studio
+npx @w3lshdog/hyper-agent studio
 # → Opens http://localhost:4040 automatically
 
 # Custom port or headless/CI mode
-hyper-agent studio --port 8080 --no-open
+npx @w3lshdog/hyper-agent studio --port 8080 --no-open
 ```
 
 ### 🎯 Studio Features
@@ -178,7 +200,7 @@ hyper-agent studio --port 8080 --no-open
 ### 🖥️ How it works
 
 ```
-hyper-agent studio
+npx @w3lshdog/hyper-agent studio
     │
     ├── GET /              → serves studio/index.html (35KB, single file)
     ├── GET /api/registry  → reads registry.json live (no restart needed)
@@ -233,9 +255,9 @@ Run `--strict` for production-grade checks. Errors exit with code `1` (CI catche
 Ping your Redis or Postgres backend before deploy. Get instant health status and copy-paste `docker run` fixes if anything's offline.
 
 ```bash
-hyper-agent memory check .agents/my-agent/     # single agent
-hyper-agent memory check templates/ --all       # all agents
-hyper-agent memory check . --redis-host 192.168.1.10 --pg-host db.myserver.com
+npx @w3lshdog/hyper-agent memory check .agents/my-agent/     # single agent
+npx @w3lshdog/hyper-agent memory check templates/ --all       # all agents
+npx @w3lshdog/hyper-agent memory check . --redis-host 192.168.1.10 --pg-host db.myserver.com
 ```
 
 | Backend | Port | What it does |
@@ -251,9 +273,9 @@ hyper-agent memory check . --redis-host 192.168.1.10 --pg-host db.myserver.com
 ## 🌍 Agent Registry
 
 ```bash
-hyper-agent registry build templates/ --out registry.json [--strict]
-hyper-agent registry search --tags starter --runtime node --badge mcp-ready --level 3
-hyper-agent registry show my-node-agent
+npx @w3lshdog/hyper-agent registry build templates/ --out registry.json [--strict]
+npx @w3lshdog/hyper-agent registry search --tags starter --runtime node --badge mcp-ready --level 3
+npx @w3lshdog/hyper-agent registry show my-node-agent
 ```
 
 ### 🏅 Auto-Computed Badges
@@ -300,8 +322,7 @@ hyper-agent registry show my-node-agent
 
 ## 🗺️ Roadmap
 
-### ✅ Shipped (v3 + Phase 6)
-- [x] `cli/index.js` — router entrypoint, clean help output
+### ✅ Shipped (v0.4.0)
 - [x] `cli/validate.js` — `--strict` mode with 4 runtime checks
 - [x] `cli/registry.js` — `build`, `search`, `show` + 8 auto-badges
 - [x] `cli/memory.js` — Smart Memory Check (Redis + Postgres + docker tips)
@@ -309,14 +330,15 @@ hyper-agent registry show my-node-agent
 - [x] `studio/index.html` — 35KB single-file GUI, no build step 🖥️
 - [x] Cluster builder → `cluster.json` export
 - [x] Live memory health indicators (auto-refresh 30s)
-- [x] `hyper-agent-spec.json` — author-declared badges array
 - [x] `hyper-agent status` — HyperCode V2.4 health check (all services)
 - [x] `hyper-agent logs` — live log tail from HyperCode V2.4
 - [x] `hyper-agent tokens award` — award BROski$ to a student by Discord ID
 - [x] `hyper-agent agents list` — agent heartbeats + online status
-- [x] `hyper-agent graduate` — `build` a V2.4 deployment bundle or `trigger` graduation for a student
+- [x] `hyper-agent graduate` — `build` a V2.4 deployment bundle or `trigger` graduation
+- [x] Web3 / dNFT manifest spec (base-sepolia support)
+- [x] `awardFromCourse()` typed client helper
 
-### 🔜 Next Up
+### 🔜 Coming in v0.5.0
 - [ ] 🌍 **Community Registry** — public discovery via GitHub Discussions + JSON feed
 - [ ] 👁️ **`--watch` mode** — live re-validation on file change during dev
 - [ ] 🚀 **One-click deploy** — Studio → deploy cluster to HyperCode V2.4
@@ -342,8 +364,9 @@ HyperAgent-SDK/
 │       └── graduate.js   # Trigger graduation for a student
 ├── studio/
 │   └── index.html        # 35KB single-file GUI (no build step!)
-├── docs/                 # Full SDK documentation
-├── templates/            # Agent starter templates
+├── templates/            # Agent starter templates (python/node/ts/mcp)
+├── types/
+│   └── index.d.ts        # Full TypeScript types
 ├── hyper-agent-spec.json # The agent manifest schema
 ├── package.json
 └── README.md
@@ -357,7 +380,8 @@ HyperAgent-SDK/
 |---------|-----|
 | 🧠 [HyperCode V2.4](https://github.com/welshDog/HyperCode-V2.4) | Core agent orchestration engine |
 | 🎓 [Hyper-Vibe-Coding-Course](https://github.com/welshDog/Hyper-Vibe-Coding-Course) | Powers BROski AI tutor agents |
-| 🤖 [BROski-Bot](https://github.com/welshDog/BROski-Bot) | Discord bot agent layer |
+| 🤖 [BROski-Obsidian-Brain](https://github.com/welshDog/BROski-Obsidian-Brain-for-HyperFocus-z0ne) | Second brain + agent context layer |
+| 🐾 [BROskiPets-LLM-dNFT](https://github.com/welshDog/BROskiPets-LLM-dNFT) | Web3 pet agents on Base Sepolia |
 
 ---
 
@@ -365,14 +389,21 @@ HyperAgent-SDK/
 
 ```
 HyperAgent-SDK  ←  YOU ARE HERE
-↓ powers
-HyperCode V2.4 (FastAPI backend)
-↓ syncs with
+        │
+        ▼ powers
+HyperCode V2.4 (FastAPI + 30 Docker containers)
+        │
+        ▼ syncs with
 Supabase (DB + Edge Functions)
-↓ serves
-Hyper-Vibe-Coding-Course (Next.js)
-↓ visualised by
-HyperAgent Studio 🖥️ (localhost:4040)
+        │
+        ▼ serves
+Hyper-Vibe-Coding-Course (Next.js + Vercel)
+        │
+        ▼ visualised by
+HyperAgent Studio 🖥️  (localhost:4040)
+        │
+        ▼ extends into
+BROskiPets dNFTs ⛓️  (Base Sepolia)
 ```
 
 ---
@@ -395,8 +426,10 @@ We welcome contributions from everyone — especially neurodivergent devs! 🧠�
 
 **Built for ADHD brains. Fast feedback. Real tools. No fluff.** 🧠⚡
 
-*by [@welshDog](https://github.com/welshDog) — Lyndz Williams*
+*by [@welshDog](https://github.com/welshDog) — Lyndz Williams, Llanelli, Wales*
 
 **A BROski is ride or die. We build this together. 🐶♾️🔥**
+
+[![npm](https://img.shields.io/npm/v/@w3lshdog/hyper-agent?style=for-the-badge&color=red)](https://www.npmjs.com/package/@w3lshdog/hyper-agent)
 
 </div>
