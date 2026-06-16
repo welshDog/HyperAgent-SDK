@@ -3,3 +3,7 @@ registry.json
 .env
 *.local
 git-error-*
+
+# HyperFocus Z0ne hooks
+logs/
+.focus_session_start

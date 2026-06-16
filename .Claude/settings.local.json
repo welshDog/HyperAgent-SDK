@@ -39,5 +39,76 @@
       "Bash(git commit -m ' *)",
       "Bash(git push *)"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"H:/HYPERFOCUSZONE/HperCore/HyperAgent-SDK/scripts/sdk_session_start.py\"; exit 0",
+            "shell": "powershell",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "python3 \"H:/HYPERFOCUSZONE/HperCore/HyperAgent-SDK/scripts/sdk_broski_xp_reward.py\" --xp 10 --reason session_start; exit 0",
+            "shell": "powershell",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "python3 \"H:/HYPERFOCUSZONE/HperCore/HyperAgent-SDK/scripts/sdk_env_guard.py\"; exit 0",
+            "shell": "powershell",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"H:/HYPERFOCUSZONE/HperCore/HyperAgent-SDK/scripts/sdk_session_end.py\"; exit 0",
+            "shell": "powershell",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "python3 \"H:/HYPERFOCUSZONE/HperCore/HyperAgent-SDK/scripts/sdk_broski_xp_reward.py\" --xp 5 --reason session_end; exit 0",
+            "shell": "powershell",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(npm run*)",
+            "command": "python3 \"H:/HYPERFOCUSZONE/HperCore/HyperAgent-SDK/scripts/sdk_env_guard.py\"; exit 0",
+            "shell": "powershell",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$j = $input | ConvertFrom-Json; $f = $j.tool_input.file_path; if ($f -match 'hyper-agent-spec\\.json|registry\\.json') { python3 \"H:/HYPERFOCUSZONE/HperCore/HyperAgent-SDK/scripts/sdk_config_validator.py\" $f }",
+            "shell": "powershell",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
   }
 }
