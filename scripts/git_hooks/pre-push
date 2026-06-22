@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# HyperFocus Z0ne -- HyperAgent-SDK manifest-validation pre-push GATE.
+#
+# The SDK is the ecosystem's AGENT INTERFACE STANDARD -- every agent's manifest
+# conforms to this schema. A broken manifest/template/test here breaks everyone
+# downstream. This gate runs the validation eval before every push and BLOCKS
+# the push if it fails.
+#
+# Install:   cp scripts/git_hooks/pre-push .git/hooks/pre-push   (chmod +x on *nix)
+# Override:  git push --no-verify          (emergency only)
+set -u
+
+if [ ! -d node_modules ]; then
+  echo "[sdk-eval] node_modules missing -- skipping gate (run: npm install)"
+  exit 0
+fi
+
+echo "[sdk-eval] validating manifests + templates + unit tests ..."
+
+OUT="$(npm test 2>&1)"; CODE=$?
+if [ "$CODE" -ne 0 ]; then
+  echo "[sdk-eval] PUSH BLOCKED -- unit tests failed:"
+  echo "$OUT" | tail -15
+  echo "[sdk-eval]   override (emergency): git push --no-verify"
+  exit 1
+fi
+
+OUT2="$(npm run test:templates 2>&1)"; CODE2=$?
+if [ "$CODE2" -ne 0 ]; then
+  echo "[sdk-eval] PUSH BLOCKED -- template/manifest validation failed:"
+  echo "$OUT2" | tail -15
+  echo "[sdk-eval]   override (emergency): git push --no-verify"
+  exit 1
+fi
+
+echo "[sdk-eval] OK -- manifests + templates + tests green, push proceeding."
+exit 0
