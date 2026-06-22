@@ -4,11 +4,11 @@
 ---
 
 ## Stack
-- TypeScript · npm package
+- Node.js (CLI in JS) + shipped TypeScript types (`types/index.d.ts`)
 - Package: `@w3lshdog/hyper-agent`
-- Current version: 0.1.7
-- Agent definitions via `manifest.json`
-- Swarm coordination API
+- Current version: 0.4.0
+- Purpose: shared agent interface standard — validate manifests, scaffold agents
+- Deps: `ajv` + `ajv-formats` (JSON-schema manifest validation)
 
 ## Key Concepts
 - Agents are defined in manifest.json — input schema + output contract
@@ -16,9 +16,11 @@
 - MCP bridge connects agents to the Brain vault (port 8100)
 
 ## Sacred Rules
-- Never use `docker.io` for socket agents — always `docker-ce-cli`
-- `npm run dev:frontend` not `npm run dev`
-- Publish loop must bump version, run tests, THEN publish
+- Publish loop must bump version, run tests (`npm test`), THEN publish
+- Never commit `.env` files
+- `git fetch` before ANY push — parallel auto-commits are running
+> ⚠️ This is a pure npm package — the `docker-ce-cli` and `npm run dev:frontend` rules
+> that get pasted into briefs belong to HyperCode/Course, NOT here. Don't apply them.
 
 ## Key Files
 - `manifest.json` — agent definitions

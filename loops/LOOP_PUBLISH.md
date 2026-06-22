@@ -16,8 +16,8 @@ npm version patch   # bug fix
 npm version minor   # new feature
 npm version major   # breaking change
 
-# 4. Build
-npm run build
+# 4. (No build step — package ships cli/ + templates/ + types/ as-is.
+#     There is NO `npm run build` script; do not invent one.)
 
 # 5. Publish
 npm publish --access public
