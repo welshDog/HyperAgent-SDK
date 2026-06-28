@@ -6,6 +6,19 @@ Format: [Semantic Versioning](https://semver.org/) — `feat:` `fix:` `docs:` `c
 
 ---
 
+## [Unreleased]
+
+### feat
+- **`registry build` accepts multiple paths** — `hyper-agent registry build <repoA> <repoB> ...` builds one ecosystem registry spanning agent repos. Each path is either an agent dir (has `manifest.json`) or a parent dir to scan. Deduped. Enables a single cross-repo registry for The Hyper Merge.
+
+### fix
+- **Phantom-path bug in `registry build`** — the value of `--out <file>` leaked into the positional path list (harmless under the old single-path code, but broke once multi-path scanning was added). Added a `positionalArgs()` helper that mirrors `parseArgs` flag-value consumption.
+
+### chore
+- Rebuilt `registry.json` from the real ecosystem (`HYPER-SILLs-By-WelshDog`) instead of the `templates/` scaffolds — now lists `hyper-sills-mcp` v1.1.0 as a verified, MCP-ready, BROski-Elite agent (port 3350, `/health`). Templates remain for scaffolding, not registry content.
+
+---
+
 ## [0.4.0] — May 22, 2026
 
 ### feat

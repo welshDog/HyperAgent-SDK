@@ -84,6 +84,24 @@ function parseArgs(args) {
   return opts;
 }
 
+// Extract positional args, skipping flags AND the values they consume
+// (mirrors parseArgs so `build <path> --out file.json` doesn't treat
+// `file.json` as a second path).
+function positionalArgs(args) {
+  const pos = [];
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    if (a.startsWith('--')) {
+      if (a.indexOf('=') === -1 && args[i + 1] && !args[i + 1].startsWith('--')) {
+        i++; // skip the value token consumed by this flag
+      }
+    } else {
+      pos.push(a);
+    }
+  }
+  return pos;
+}
+
 // ─── Registry file helpers ────────────────────────────────────────────────────
 
 const DEFAULT_REGISTRY = 'registry.json';
@@ -107,19 +125,14 @@ function loadRegistry(filePath) {
 
 function buildRegistry(args) {
   const opts       = parseArgs(args);
-  const pathArgs   = args.filter(a => !a.startsWith('--'));
-  const targetArg  = pathArgs[0];
+  const pathArgs   = positionalArgs(args);
   const outFile    = opts.out || DEFAULT_REGISTRY;
   const useStrict  = opts.strict === true;
 
-  if (!targetArg) {
-    console.log(`${BOLD}Usage:${RESET} hyper-agent registry build <path> ${DIM}[--out registry.json] [--strict]${RESET}`);
-    process.exit(1);
-  }
-
-  const target = path.resolve(targetArg);
-  if (!fs.existsSync(target)) {
-    console.error(`${RED}✗ Path not found: ${target}${RESET}`);
+  if (pathArgs.length === 0) {
+    console.log(`${BOLD}Usage:${RESET} hyper-agent registry build <path...> ${DIM}[--out registry.json] [--strict]${RESET}`);
+    console.log(`${DIM}  Each <path> is either an agent dir (contains manifest.json) or a parent dir to scan.${RESET}`);
+    console.log(`${DIM}  Pass multiple paths to build one ecosystem registry across repos.${RESET}`);
     process.exit(1);
   }
 
@@ -130,13 +143,30 @@ function buildRegistry(args) {
   const spec       = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'hyper-agent-spec.json'), 'utf8'));
   const ajvValidate = ajv.compile(spec);
 
-  const entries  = fs.readdirSync(target, { withFileTypes: true });
-  const agentDirs = fs.existsSync(path.join(target, 'manifest.json'))
-    ? [target]
-    : entries.filter(e => e.isDirectory()).map(e => path.join(target, e.name));
+  // Collect agent dirs across one or more target paths. A path that directly
+  // contains a manifest.json is a single agent; otherwise its immediate
+  // subdirectories are scanned. Deduped so overlapping paths are safe.
+  const agentDirs = [];
+  for (const targetArg of pathArgs) {
+    const target = path.resolve(targetArg);
+    if (!fs.existsSync(target)) {
+      console.error(`${RED}✗ Path not found: ${target}${RESET}`);
+      process.exit(1);
+    }
+    if (fs.existsSync(path.join(target, 'manifest.json'))) {
+      agentDirs.push(target);
+    } else {
+      fs.readdirSync(target, { withFileTypes: true })
+        .filter(e => e.isDirectory())
+        .forEach(e => agentDirs.push(path.join(target, e.name)));
+    }
+  }
+  const uniqueAgentDirs = [...new Set(agentDirs)];
+  agentDirs.length = 0;
+  agentDirs.push(...uniqueAgentDirs);
 
   if (agentDirs.length === 0) {
-    console.log(`${YELLOW}⚠ No agent directories found in ${target}${RESET}`);
+    console.log(`${YELLOW}⚠ No agent directories found in: ${pathArgs.join(', ')}${RESET}`);
     process.exit(0);
   }
 
