@@ -89,8 +89,8 @@
         "hooks": [
           {
             "type": "command",
-            "if": "Bash(npm run*)",
             "command": "python3 \"H:/HYPERFOCUSZONE/HperCore/HyperAgent-SDK/scripts/sdk_env_guard.py\"; exit 0",
+            "if": "Bash(npm run*)",
             "shell": "powershell",
             "timeout": 15
           }
@@ -110,5 +110,10 @@
         ]
       }
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "hyper-sills",
+    "github",
+    "filesystem"
+  ]
 }
