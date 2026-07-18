@@ -1,0 +1,12 @@
+# HyperFocus Z0ne repo manifest - read by scripts/gen_repo_map.py
+# Edit this file, then re-run the generator. Never hand-edit the map.
+
+name: "HyperAgent-SDK"
+emoji: "📦"
+tagline: "npm agent orchestration package `@w3lshdog/hyper-agent`"
+category: "core"
+stack: "Node/JS"
+first_doc: "README.md"
+tier: "LIVE"
+url: ""
+notes: "pre-push gate: npm test (72) + test:templates"
