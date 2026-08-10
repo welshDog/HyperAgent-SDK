@@ -1,0 +1,30 @@
+name: Framework Adapter Validation
+
+on:
+  push:
+    paths:
+      - "adapters/**"
+      - "tests/test_framework_adapters.py"
+      - "adapters/requirements-frameworks.txt"
+      - ".github/workflows/framework-adapters.yml"
+  pull_request:
+    paths:
+      - "adapters/**"
+      - "tests/test_framework_adapters.py"
+      - "adapters/requirements-frameworks.txt"
+      - ".github/workflows/framework-adapters.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install optional framework dependencies
+        run: python -m pip install -r adapters/requirements-frameworks.txt
+      - name: Compile adapter code
+        run: python -m compileall -q adapters tests/test_framework_adapters.py
+      - name: Run adapter tests
+        run: python -m pytest tests/test_framework_adapters.py -q
